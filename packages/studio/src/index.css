@@ -7,6 +7,13 @@
   box-sizing: border-box;
 }
 
+/* --------- View Transition: theme crossfade --------- */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 360ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 html, body, #root {
   height: 100%;
 }
@@ -300,6 +307,41 @@ img, svg { display: block; }
   line-height: var(--ds-line-height-base);
 }
 
+.brand-input__history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--ds-space-xs);
+}
+
+.brand-input__history-header .brand-input__subheading {
+  margin: 0;
+}
+
+.brand-input__clear-history {
+  background: transparent;
+  border: none;
+  font-family: var(--ds-font-body);
+  font-size: var(--ds-text-xs-size);
+  font-weight: var(--ds-weight-medium);
+  color: var(--ds-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  padding: var(--ds-space-xs);
+  border-radius: var(--ds-radius-sm);
+  transition: color var(--ds-duration-fast) var(--ds-easing-standard);
+}
+
+.brand-input__clear-history:hover:not(:disabled) {
+  color: var(--ds-color-error);
+}
+
+.brand-input__clear-history:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .brand-input__history {
   list-style: none;
   padding: 0;
@@ -438,4 +480,44 @@ img, svg { display: block; }
   font-weight: var(--ds-weight-medium);
   color: var(--ds-text-secondary);
   margin-bottom: var(--ds-space-xs);
+}
+
+/* --------- Typography scale --------- */
+
+.type-scale {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-sm);
+  border-top: var(--ds-border-thin) solid var(--ds-color-neutral-200);
+  padding-top: var(--ds-space-md);
+}
+
+.type-scale__row {
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  gap: var(--ds-space-md);
+  align-items: baseline;
+}
+
+.type-scale__step {
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-xs-size);
+  color: var(--ds-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.type-scale__sample {
+  color: var(--ds-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gallery__section-description code {
+  font-family: var(--ds-font-mono);
+  font-size: 0.875em;
+  padding: 0.125rem 0.375rem;
+  background: var(--ds-surface-overlay);
+  border-radius: var(--ds-radius-sm);
 }

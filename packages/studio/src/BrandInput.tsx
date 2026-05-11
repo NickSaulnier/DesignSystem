@@ -30,6 +30,7 @@ interface BrandInputProps {
   onCancel:        () => void;
   onReset:         () => void;
   onRestore:       (entry: HistoryEntry) => void;
+  onClearHistory:  () => void;
 }
 
 const PRESETS: Array<{ label: string; value: string }> = [
@@ -60,6 +61,7 @@ export function BrandInput({
   onCancel,
   onReset,
   onRestore,
+  onClearHistory,
 }: BrandInputProps) {
   const [description, setDescription] = useState("");
 
@@ -180,7 +182,17 @@ export function BrandInput({
 
       {history.length > 0 && (
         <section className="brand-input__section">
-          <h3 className="brand-input__subheading">History</h3>
+          <div className="brand-input__history-header">
+            <h3 className="brand-input__subheading">History</h3>
+            <button
+              type="button"
+              className="brand-input__clear-history"
+              onClick={onClearHistory}
+              disabled={status === "generating"}
+            >
+              Clear
+            </button>
+          </div>
           <ul className="brand-input__history">
             {history.map((entry) => (
               <li key={entry.createdAt}>

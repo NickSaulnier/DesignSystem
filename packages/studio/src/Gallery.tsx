@@ -1,5 +1,7 @@
 import { useState } from "react";
 import {
+  Alert,
+  Avatar,
   Badge,
   Button,
   Card,
@@ -9,6 +11,7 @@ import {
   CardHeader,
   CardTitle,
   Input,
+  Toggle,
 } from "@design-system/components";
 import type { BrandTheme, ColorScale } from "@design-system/tokens";
 
@@ -22,13 +25,160 @@ export function Gallery({ theme }: GalleryProps) {
   return (
     <div className="gallery">
       <Intro theme={theme} />
+      <TypographySection theme={theme} />
       <ColorSection theme={theme} />
       <ButtonSection />
       <BadgeSection />
       <CardSection />
       <FormSection />
+      <AlertSection />
+      <AvatarSection />
+      <ToggleSection />
       <SemanticSection />
     </div>
+  );
+}
+
+const TYPE_STEPS = ["xs", "sm", "base", "lg", "xl", "2xl", "3xl", "4xl", "5xl"] as const;
+
+function TypographySection({ theme }: { theme: BrandTheme }) {
+  const sampleHeading = "The quick brown fox";
+  const sampleBody    = "Pack my box with five dozen liquor jugs — 1234567890";
+  return (
+    <section className="gallery__section">
+      <h2 className="gallery__section-title">Typography</h2>
+      <p className="gallery__section-description">
+        Heading family: <code>{theme.typography.fontFamily.heading.split(",")[0]}</code>.
+        Body family: <code>{theme.typography.fontFamily.body.split(",")[0]}</code>.
+      </p>
+
+      <div className="type-scale">
+        {TYPE_STEPS.map((step) => (
+          <div key={step} className="type-scale__row">
+            <div className="type-scale__step">{step}</div>
+            <div
+              className="type-scale__sample"
+              style={{
+                fontSize:   `var(--ds-text-${step}-size)`,
+                lineHeight: `var(--ds-text-${step}-line-height)`,
+                fontFamily: step === "xs" || step === "sm" ? "var(--ds-font-body)" : "var(--ds-font-heading)",
+                fontWeight: step === "xs" || step === "sm" ? "var(--ds-weight-normal)" : "var(--ds-weight-bold)",
+                letterSpacing: "var(--ds-letter-spacing-tight)",
+              }}
+            >
+              {step === "xs" || step === "sm" ? sampleBody : sampleHeading}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="gallery__row">
+        <span style={{ fontWeight: "var(--ds-weight-normal)" }}>Normal {theme.typography.weight.normal}</span>
+        <span style={{ fontWeight: "var(--ds-weight-medium)" }}>Medium {theme.typography.weight.medium}</span>
+        <span style={{ fontWeight: "var(--ds-weight-bold)"   }}>Bold {theme.typography.weight.bold}</span>
+      </div>
+    </section>
+  );
+}
+
+function AlertSection() {
+  const [dismissed, setDismissed] = useState<Record<string, boolean>>({});
+  const tones = [
+    { tone: "info"    as const, title: "Heads up",             body: "A new version of the dashboard is available." },
+    { tone: "success" as const, title: "Saved successfully",    body: "Your changes have been published to production." },
+    { tone: "warning" as const, title: "Approaching usage cap", body: "You have used 82% of your monthly request quota." },
+    { tone: "error"   as const, title: "Action required",       body: "We couldn't process your last payment. Please update billing." },
+  ];
+
+  return (
+    <section className="gallery__section">
+      <h2 className="gallery__section-title">Alerts</h2>
+      <p className="gallery__section-description">
+        Four tones — each tints background + border via the matching semantic color.
+      </p>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-sm)" }}>
+        {tones.map(({ tone, title, body }) =>
+          dismissed[tone] ? null : (
+            <Alert
+              key={tone}
+              tone={tone}
+              title={title}
+              icon={tone === "success" ? "✓" : tone === "warning" ? "⚠" : tone === "error" ? "✕" : "ⓘ"}
+              onDismiss={() => setDismissed((d) => ({ ...d, [tone]: true }))}
+            >
+              {body}
+            </Alert>
+          ),
+        )}
+        {Object.keys(dismissed).length > 0 && (
+          <div>
+            <Button size="sm" variant="ghost" onClick={() => setDismissed({})}>
+              Restore dismissed
+            </Button>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function AvatarSection() {
+  return (
+    <section className="gallery__section">
+      <h2 className="gallery__section-title">Avatars</h2>
+      <p className="gallery__section-description">
+        Four sizes; circle or square; falls back to initials when no image source is provided.
+      </p>
+
+      <div className="gallery__row">
+        <Avatar size="sm" name="Ada Lovelace" />
+        <Avatar size="md" name="Marie Curie" />
+        <Avatar size="lg" name="Katherine Johnson" />
+        <Avatar size="xl" name="Grace Hopper" />
+      </div>
+
+      <div className="gallery__row">
+        <Avatar size="md" name="Ada Lovelace" shape="square" />
+        <Avatar size="md" name="Marie Curie"  shape="square" />
+        <Avatar size="md" name="Katherine Johnson" shape="square" />
+        <Avatar size="md" name="Grace Hopper" shape="square" />
+      </div>
+    </section>
+  );
+}
+
+function ToggleSection() {
+  const [notifications, setNotifications] = useState(true);
+  const [marketing, setMarketing]         = useState(false);
+  const [analytics, setAnalytics]         = useState(true);
+  return (
+    <section className="gallery__section">
+      <h2 className="gallery__section-title">Toggles</h2>
+      <p className="gallery__section-description">
+        Switch component — exercises the primary color and motion tokens.
+      </p>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-md)" }}>
+        <Toggle
+          checked={notifications}
+          onChange={setNotifications}
+          label="Email notifications"
+        />
+        <Toggle
+          checked={marketing}
+          onChange={setMarketing}
+          label="Marketing updates"
+        />
+        <Toggle
+          checked={analytics}
+          onChange={setAnalytics}
+          label="Anonymous analytics"
+          size="sm"
+        />
+        <Toggle checked={true} onChange={() => {}} label="Locked on" disabled />
+      </div>
+    </section>
   );
 }
 

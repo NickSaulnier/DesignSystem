@@ -85,15 +85,33 @@ export function themeToCSSString(theme: BrandTheme, selector: string = ":root"):
   return `${selector} {\n${lines.join("\n")}\n}`;
 }
 
-export function injectTheme(theme: BrandTheme, target?: HTMLElement): void {
+export interface InjectThemeOptions {
+  /** Target element to set CSS variables on. Defaults to documentElement. */
+  target?: HTMLElement;
+  /**
+   * If true and the browser supports the View Transitions API, the swap is
+   * animated as a crossfade. Falls back to instant swap on unsupported browsers.
+   */
+  animated?: boolean;
+}
+
+export function injectTheme(theme: BrandTheme, options: InjectThemeOptions = {}): void {
   if (typeof document === "undefined") {
     throw new Error("injectTheme requires a DOM environment");
   }
-  const el = target ?? document.documentElement;
+  const el   = options.target ?? document.documentElement;
   const vars = themeToCSSVars(theme);
-  for (const [key, value] of Object.entries(vars)) {
-    el.style.setProperty(key, value);
+  const apply = () => {
+    for (const [key, value] of Object.entries(vars)) {
+      el.style.setProperty(key, value);
+    }
+  };
+
+  if (options.animated && typeof document.startViewTransition === "function") {
+    document.startViewTransition(apply);
+    return;
   }
+  apply();
 }
 
 export function clearTheme(target?: HTMLElement): void {

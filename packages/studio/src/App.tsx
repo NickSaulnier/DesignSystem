@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   defaultTheme,
   injectTheme,
+  safeParseTheme,
   type BrandTheme,
 } from "@design-system/tokens";
 import { Gallery } from "./Gallery.js";
@@ -13,19 +14,59 @@ import {
 } from "./BrandInput.js";
 import { generateThemeFromDescription } from "./api.js";
 
-const HISTORY_LIMIT = 8;
+const HISTORY_LIMIT = 12;
+const HISTORY_KEY   = "ds-studio:theme-history:v1";
+
+function loadHistory(): HistoryEntry[] {
+  if (typeof localStorage === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) return [];
+
+    // Validate each entry's theme against the schema — if the schema has shifted,
+    // we silently drop incompatible entries rather than crash on render.
+    return parsed
+      .filter((entry): entry is HistoryEntry =>
+        typeof entry === "object" && entry !== null
+        && "description" in entry  && typeof (entry as HistoryEntry).description === "string"
+        && "createdAt"   in entry  && typeof (entry as HistoryEntry).createdAt   === "number"
+        && "theme"       in entry  && safeParseTheme((entry as HistoryEntry).theme).success,
+      )
+      .slice(0, HISTORY_LIMIT);
+  } catch {
+    return [];
+  }
+}
+
+function saveHistory(history: HistoryEntry[]): void {
+  if (typeof localStorage === "undefined") return;
+  try {
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+  } catch {
+    // Quota exceeded or storage disabled — fail silently.
+  }
+}
 
 export function App() {
   const [theme, setTheme]           = useState<BrandTheme>(defaultTheme);
   const [status, setStatus]         = useState<GenerationStatus>("idle");
   const [errorMessage, setError]    = useState<string | null>(null);
   const [lastMeta, setLastMeta]     = useState<GenerationMeta | null>(null);
-  const [history, setHistory]       = useState<HistoryEntry[]>([]);
+  const [history, setHistory]       = useState<HistoryEntry[]>(() => loadHistory());
   const abortRef                    = useRef<AbortController | null>(null);
+  const firstRender                 = useRef(true);
 
   useEffect(() => {
-    injectTheme(theme);
+    // Skip the View Transitions animation on the initial paint — only animate swaps.
+    injectTheme(theme, { animated: !firstRender.current });
+    firstRender.current = false;
   }, [theme]);
+
+  useEffect(() => {
+    saveHistory(history);
+  }, [history]);
 
   const handleGenerate = useCallback(async (description: string) => {
     abortRef.current?.abort();
@@ -74,6 +115,10 @@ export function App() {
     setLastMeta(null);
   }, []);
 
+  const handleClearHistory = useCallback(() => {
+    setHistory([]);
+  }, []);
+
   const handleRestore = useCallback((entry: HistoryEntry) => {
     setTheme(entry.theme);
     setStatus("success");
@@ -105,6 +150,7 @@ export function App() {
             onCancel={handleCancel}
             onReset={handleReset}
             onRestore={handleRestore}
+            onClearHistory={handleClearHistory}
           />
         </aside>
         <section className="studio__preview">
