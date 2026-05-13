@@ -105,6 +105,10 @@ export function injectTheme(theme: BrandTheme, options: InjectThemeOptions = {})
     for (const [key, value] of Object.entries(vars)) {
       el.style.setProperty(key, value);
     }
+    // Inform the UA so native controls (select popups, scrollbars, default
+    // form widgets) render in the right tone. Without this, the OS-level
+    // dropdown for <select> stays light even when the page is dark.
+    el.style.colorScheme = theme.mode === "dark" ? "dark" : "light";
   };
 
   if (options.animated && typeof document.startViewTransition === "function") {
