@@ -1,6 +1,6 @@
 /* ============================================================
    Design System — base stylesheet
-   All rules consume CSS variables defined by @design-system/tokens.
+   All rules consume CSS variables defined by @nicksaulnier/design-system-tokens.
    Class prefix: .ds-*
    ============================================================ */
 

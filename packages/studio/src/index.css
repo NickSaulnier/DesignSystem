@@ -1,4 +1,4 @@
-/* Studio-app chrome only. Component styles come from @design-system/components/styles.css.
+/* Studio-app chrome only. Component styles come from @nicksaulnier/design-system-components/styles.css.
    The Studio chrome ALSO consumes --ds-* variables, so the entire app retones with the theme. */
 
 *,

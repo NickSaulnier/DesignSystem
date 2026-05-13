@@ -1,7 +1,30 @@
 {
-  "name": "@design-system/tokens",
-  "version": "0.0.1",
+  "name": "@nicksaulnier/design-system-tokens",
+  "version": "0.0.0",
   "description": "Design token schema, Zod validators, and CSS variable emitter for the AI-powered design system.",
+  "keywords": [
+    "design-system",
+    "design-tokens",
+    "css-variables",
+    "zod",
+    "theme",
+    "color-scale",
+    "lch",
+    "w3c-design-tokens",
+    "tailwind",
+    "figma-tokens"
+  ],
+  "license": "MIT",
+  "author": "Nick Saulnier",
+  "homepage": "https://github.com/NickSaulnier/DesignSystem#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NickSaulnier/DesignSystem.git",
+    "directory": "packages/tokens"
+  },
+  "bugs": {
+    "url": "https://github.com/NickSaulnier/DesignSystem/issues"
+  },
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -11,9 +34,17 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
-    }
+    },
+    "./package.json": "./package.json"
   },
-  "files": ["dist"],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",

@@ -1,5 +1,5 @@
 {
-  "name": "@design-system/studio",
+  "name": "@nicksaulnier/design-system-studio",
   "version": "0.0.1",
   "description": "Interactive playground: type a brand description, watch Claude generate a theme, preview live across components.",
   "type": "module",
@@ -11,9 +11,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@design-system/components": "workspace:*",
-    "@design-system/theme-engine": "workspace:*",
-    "@design-system/tokens": "workspace:*",
+    "@nicksaulnier/design-system-components": "workspace:*",
+    "@nicksaulnier/design-system-theme-engine": "workspace:*",
+    "@nicksaulnier/design-system-tokens": "workspace:*",
     "react": "^18.3.0",
     "react-dom": "^18.3.0"
   },

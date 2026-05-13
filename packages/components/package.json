@@ -1,7 +1,26 @@
 {
-  "name": "@design-system/components",
-  "version": "0.0.1",
-  "description": "React components for the AI-powered design system. Consume CSS variables emitted by @design-system/tokens.",
+  "name": "@nicksaulnier/design-system-components",
+  "version": "0.0.0",
+  "description": "React components for the AI-powered design system. Consume CSS variables emitted by @nicksaulnier/design-system-tokens — zero runtime styling.",
+  "keywords": [
+    "design-system",
+    "react",
+    "react-components",
+    "ui",
+    "css-variables",
+    "components"
+  ],
+  "license": "MIT",
+  "author": "Nick Saulnier",
+  "homepage": "https://github.com/NickSaulnier/DesignSystem#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NickSaulnier/DesignSystem.git",
+    "directory": "packages/components"
+  },
+  "bugs": {
+    "url": "https://github.com/NickSaulnier/DesignSystem/issues"
+  },
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -12,10 +31,20 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
-    "./styles.css": "./dist/styles.css"
+    "./styles.css": "./dist/styles.css",
+    "./package.json": "./package.json"
   },
-  "files": ["dist"],
-  "sideEffects": ["**/*.css"],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsup && node scripts/copy-css.mjs",
     "dev": "tsup --watch",
@@ -27,7 +56,7 @@
     "react-dom": ">=18"
   },
   "dependencies": {
-    "@design-system/tokens": "workspace:*",
+    "@nicksaulnier/design-system-tokens": "workspace:*",
     "clsx": "^2.1.1"
   },
   "devDependencies": {

@@ -1,5 +1,5 @@
 import { converter, formatHex, clampChroma, type Lch } from "culori";
-import type { ColorScale } from "@design-system/tokens";
+import type { ColorScale } from "@nicksaulnier/design-system-tokens";
 
 const toLch = converter("lch");
 

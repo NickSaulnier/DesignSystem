@@ -1,5 +1,5 @@
 {
-  "name": "@design-system/theme-engine",
+  "name": "@nicksaulnier/design-system-theme-engine",
   "version": "0.0.1",
   "description": "Claude-powered theme generation: brand description -> validated design tokens.",
   "type": "module",
@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.95.1",
-    "@design-system/tokens": "workspace:*",
+    "@nicksaulnier/design-system-tokens": "workspace:*",
     "culori": "^4.0.1",
     "zod": "^3.23.0"
   },

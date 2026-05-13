@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 import dotenv from "dotenv";
-import { generateTheme, generateThemeStreamed } from "@design-system/theme-engine";
+import { generateTheme, generateThemeStreamed } from "@nicksaulnier/design-system-theme-engine";
 
 const here = dirname(fileURLToPath(import.meta.url));
 

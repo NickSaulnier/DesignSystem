@@ -20,7 +20,7 @@ cp .env.example .env
 pnpm build
 
 # 4. Start the Studio
-pnpm --filter @design-system/studio dev
+pnpm --filter @nicksaulnier/design-system-studio dev
 ```
 
 Open http://localhost:5173, type a brand description (or click a preset), and click **Generate theme**. The entire UI retones in one frame.
@@ -40,7 +40,7 @@ Open http://localhost:5173, type a brand description (or click a preset), and cl
          │ injectTheme(theme)                                    │ generateTheme(description)
          ▼                                                       ▼
    sets --ds-* CSS vars                              ┌──────────────────────┐
-   on <html>                                         │  @design-system/     │
+   on <html>                                         │  @nicksaulnier/design-system-     │
                                                      │  theme-engine        │
                                                      │                      │
                                                      │  • Claude API call   │
@@ -84,18 +84,18 @@ A single Claude call returns brand-level decisions (personality, color seeds, fo
 
 ```
 packages/
-├── tokens/         # @design-system/tokens
-├── components/     # @design-system/components
-├── theme-engine/   # @design-system/theme-engine
-└── studio/         # @design-system/studio  (private)
+├── tokens/         # @nicksaulnier/design-system-tokens
+├── components/     # @nicksaulnier/design-system-components
+├── theme-engine/   # @nicksaulnier/design-system-theme-engine
+└── studio/         # @nicksaulnier/design-system-studio  (private)
 ```
 
-### `@design-system/tokens`
+### `@nicksaulnier/design-system-tokens`
 
 The contract. A Zod schema for `BrandTheme` plus a CSS-variable emitter.
 
 ```ts
-import { defaultTheme, injectTheme, parseTheme } from "@design-system/tokens";
+import { defaultTheme, injectTheme, parseTheme } from "@nicksaulnier/design-system-tokens";
 
 injectTheme(defaultTheme);          // sets --ds-* on document.documentElement
 const valid = parseTheme(unknown);  // validate any external theme JSON
@@ -103,23 +103,23 @@ const valid = parseTheme(unknown);  // validate any external theme JSON
 
 Every variable is prefixed `--ds-` to avoid collisions. The default theme is a neutral blue baseline used as the boot-up theme and as a fallback.
 
-### `@design-system/components`
+### `@nicksaulnier/design-system-components`
 
 React components consuming `--ds-*` CSS variables — no JS-side styling. One stylesheet (`styles.css`), zero runtime overhead.
 
 Currently shipped: `Button`, `Card` (+ `CardHeader` / `CardBody` / `CardFooter` / `CardTitle` / `CardDescription`), `Badge`, `Input`.
 
 ```tsx
-import "@design-system/components/styles.css";
-import { Button, Card, Badge, Input } from "@design-system/components";
+import "@nicksaulnier/design-system-components/styles.css";
+import { Button, Card, Badge, Input } from "@nicksaulnier/design-system-components";
 ```
 
-### `@design-system/theme-engine`
+### `@nicksaulnier/design-system-theme-engine`
 
 Claude integration. One function:
 
 ```ts
-import { generateTheme } from "@design-system/theme-engine";
+import { generateTheme } from "@nicksaulnier/design-system-theme-engine";
 
 const result = await generateTheme("a calm meditation app for tired parents");
 // result.theme — fully-validated BrandTheme
@@ -129,7 +129,7 @@ const result = await generateTheme("a calm meditation app for tired parents");
 
 Requires `ANTHROPIC_API_KEY` in the environment. **Must run server-side** — never import this into client bundle code.
 
-### `@design-system/studio` *(private)*
+### `@nicksaulnier/design-system-studio` *(private)*
 
 Vite + React playground. Brand input panel (textarea + presets + history) on the left, live component gallery on the right. The studio's own chrome consumes the same `--ds-*` variables, so the entire app retones when you generate a new theme — not just the showcased components.
 
@@ -207,16 +207,16 @@ DesignSystem/
 pnpm typecheck
 
 # Rebuild a single package
-pnpm --filter @design-system/theme-engine build
+pnpm --filter @nicksaulnier/design-system-theme-engine build
 
 # Rebuild theme-engine in watch mode while iterating on the engine
-pnpm --filter @design-system/theme-engine dev
+pnpm --filter @nicksaulnier/design-system-theme-engine dev
 
 # Run the studio dev server
-pnpm --filter @design-system/studio dev
+pnpm --filter @nicksaulnier/design-system-studio dev
 ```
 
-**Note on workspace deps:** the Studio imports `@design-system/theme-engine` from its built `dist/`, so if you change theme-engine source you'll need to rebuild it (or run its `dev` task in parallel) before the change is visible to the Studio.
+**Note on workspace deps:** the Studio imports `@nicksaulnier/design-system-theme-engine` from its built `dist/`, so if you change theme-engine source you'll need to rebuild it (or run its `dev` task in parallel) before the change is visible to the Studio.
 
 ---
 
@@ -237,4 +237,4 @@ pnpm --filter @design-system/studio dev
 - [ ] Dark-mode variant generation
 - [ ] Persistent theme history (localStorage)
 - [ ] Animated theme transitions on swap
-- [ ] Publish `@design-system/tokens` and `@design-system/components` to npm
+- [ ] Publish `@nicksaulnier/design-system-tokens` and `@nicksaulnier/design-system-components` to npm

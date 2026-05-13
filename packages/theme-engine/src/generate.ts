@@ -1,6 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
-import { parseTheme, type BrandTheme } from "@design-system/tokens";
+import { parseTheme, type BrandTheme } from "@nicksaulnier/design-system-tokens";
 import { composeTheme, type ComposeResult } from "./compose.js";
 import { SYSTEM_PROMPT, buildUserMessage } from "./prompts.js";
 import {

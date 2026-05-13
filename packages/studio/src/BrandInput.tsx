@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
-import { Button } from "@design-system/components";
-import type { BrandTheme } from "@design-system/tokens";
-import type { GenerationPhase } from "@design-system/theme-engine";
+import { Button } from "@nicksaulnier/design-system-components";
+import type { BrandTheme } from "@nicksaulnier/design-system-tokens";
+import type { GenerationPhase } from "@nicksaulnier/design-system-theme-engine";
 
 export type GenerationStatus = "idle" | "generating" | "success" | "error";
 

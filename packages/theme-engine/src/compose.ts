@@ -3,7 +3,7 @@ import {
   type BrandTheme,
   type ColorScale,
   defaultTheme,
-} from "@design-system/tokens";
+} from "@nicksaulnier/design-system-tokens";
 import { generateColorScale, generateNeutralScale } from "./color.js";
 import { ensureTextOnSurface, contrast } from "./accessibility.js";
 import { getFontPair } from "./fonts.js";

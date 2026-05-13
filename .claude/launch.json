@@ -4,7 +4,7 @@
     {
       "name": "studio",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@design-system/studio", "dev"],
+      "runtimeArgs": ["--filter", "@nicksaulnier/design-system-studio", "dev"],
       "port": 5173
     }
   ]

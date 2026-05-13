@@ -1,5 +1,5 @@
-import type { BrandTheme } from "@design-system/tokens";
-import type { GenerationPhase, ThemeGenerationOutput } from "@design-system/theme-engine";
+import type { BrandTheme } from "@nicksaulnier/design-system-tokens";
+import type { GenerationPhase, ThemeGenerationOutput } from "@nicksaulnier/design-system-theme-engine";
 
 export interface GenerateThemeResponse {
   theme:       BrandTheme;

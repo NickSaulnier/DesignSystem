@@ -1,11 +1,11 @@
 import { useMemo, useState } from "react";
-import { Button } from "@design-system/components";
+import { Button } from "@nicksaulnier/design-system-components";
 import {
   themeToCSSString,
   themeToTailwindConfigString,
   themeToFigmaTokensString,
   type BrandTheme,
-} from "@design-system/tokens";
+} from "@nicksaulnier/design-system-tokens";
 
 type Format = "css" | "tailwind" | "figma";
 

@@ -4,11 +4,11 @@ import {
   injectTheme,
   safeParseTheme,
   type BrandTheme,
-} from "@design-system/tokens";
+} from "@nicksaulnier/design-system-tokens";
 import {
   deriveDarkVariant,
   type GenerationPhase,
-} from "@design-system/theme-engine";
+} from "@nicksaulnier/design-system-theme-engine";
 import { Gallery } from "./Gallery.js";
 import {
   BrandInput,
