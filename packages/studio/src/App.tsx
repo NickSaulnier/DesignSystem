@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   defaultTheme,
   injectTheme,
   safeParseTheme,
   type BrandTheme,
 } from "@design-system/tokens";
+import { deriveDarkVariant } from "@design-system/theme-engine";
 import { Gallery } from "./Gallery.js";
 import {
   BrandInput,
@@ -16,6 +17,9 @@ import { generateThemeFromDescription } from "./api.js";
 
 const HISTORY_LIMIT = 12;
 const HISTORY_KEY   = "ds-studio:theme-history:v1";
+const MODE_KEY      = "ds-studio:mode:v1";
+
+type ModePreference = "light" | "dark" | "auto";
 
 function loadHistory(): HistoryEntry[] {
   if (typeof localStorage === "undefined") return [];
@@ -49,20 +53,56 @@ function saveHistory(history: HistoryEntry[]): void {
   }
 }
 
+function loadMode(): ModePreference {
+  if (typeof localStorage === "undefined") return "light";
+  const raw = localStorage.getItem(MODE_KEY);
+  return raw === "light" || raw === "dark" || raw === "auto" ? raw : "light";
+}
+
+function prefersDark(): boolean {
+  return typeof window !== "undefined"
+    && typeof window.matchMedia === "function"
+    && window.matchMedia("(prefers-color-scheme: dark)").matches;
+}
+
 export function App() {
   const [theme, setTheme]           = useState<BrandTheme>(defaultTheme);
   const [status, setStatus]         = useState<GenerationStatus>("idle");
   const [errorMessage, setError]    = useState<string | null>(null);
   const [lastMeta, setLastMeta]     = useState<GenerationMeta | null>(null);
   const [history, setHistory]       = useState<HistoryEntry[]>(() => loadHistory());
+  const [modePref, setModePref]     = useState<ModePreference>(() => loadMode());
+  const [systemDark, setSystemDark] = useState<boolean>(() => prefersDark());
   const abortRef                    = useRef<AbortController | null>(null);
   const firstRender                 = useRef(true);
 
+  // Subscribe to system prefers-color-scheme so "auto" stays current.
+  useEffect(() => {
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") return;
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const handler = (e: MediaQueryListEvent) => setSystemDark(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  useEffect(() => {
+    if (typeof localStorage !== "undefined") {
+      try { localStorage.setItem(MODE_KEY, modePref); } catch { /* ignore */ }
+    }
+  }, [modePref]);
+
+  const effectiveDark = modePref === "dark" || (modePref === "auto" && systemDark);
+
+  const displayTheme = useMemo(
+    () => (effectiveDark ? deriveDarkVariant(theme) : theme),
+    [effectiveDark, theme],
+  );
+
   useEffect(() => {
     // Skip the View Transitions animation on the initial paint — only animate swaps.
-    injectTheme(theme, { animated: !firstRender.current });
+    injectTheme(displayTheme, { animated: !firstRender.current });
     firstRender.current = false;
-  }, [theme]);
+  }, [displayTheme]);
 
   useEffect(() => {
     saveHistory(history);
@@ -133,10 +173,11 @@ export function App() {
           <div>
             <h1 className="studio__title">Design System Studio</h1>
             <div className="studio__theme-name">
-              Theme: <strong>{theme.identity.name}</strong> — {theme.identity.personality.join(" · ")}
+              Theme: <strong>{displayTheme.identity.name}</strong> — {displayTheme.identity.personality.join(" · ")}
             </div>
           </div>
         </div>
+        <ModeToggle value={modePref} onChange={setModePref} />
       </header>
 
       <main className="studio__split">
@@ -154,9 +195,40 @@ export function App() {
           />
         </aside>
         <section className="studio__preview">
-          <Gallery theme={theme} />
+          <Gallery theme={displayTheme} />
         </section>
       </main>
+    </div>
+  );
+}
+
+interface ModeToggleProps {
+  value:    ModePreference;
+  onChange: (next: ModePreference) => void;
+}
+
+function ModeToggle({ value, onChange }: ModeToggleProps) {
+  const options: Array<{ id: ModePreference; label: string; glyph: string }> = [
+    { id: "light", label: "Light", glyph: "☀" },
+    { id: "auto",  label: "Auto",  glyph: "◐" },
+    { id: "dark",  label: "Dark",  glyph: "☾" },
+  ];
+  return (
+    <div className="mode-toggle" role="radiogroup" aria-label="Color mode">
+      {options.map((o) => (
+        <button
+          key={o.id}
+          type="button"
+          role="radio"
+          aria-checked={value === o.id}
+          className={`mode-toggle__option${value === o.id ? " mode-toggle__option--active" : ""}`}
+          onClick={() => onChange(o.id)}
+          title={o.label}
+        >
+          <span aria-hidden="true">{o.glyph}</span>
+          <span className="mode-toggle__label">{o.label}</span>
+        </button>
+      ))}
     </div>
   );
 }

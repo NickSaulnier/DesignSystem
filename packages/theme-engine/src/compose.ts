@@ -1,3 +1,4 @@
+import { converter, formatHex, clampChroma, type Lch } from "culori";
 import {
   type BrandTheme,
   type ColorScale,
@@ -7,6 +8,8 @@ import { generateColorScale, generateNeutralScale } from "./color.js";
 import { ensureTextOnSurface, contrast } from "./accessibility.js";
 import { getFontPair } from "./fonts.js";
 import { type Characteristics, type ThemeGenerationOutput } from "./schemas.js";
+
+const toLch = converter("lch");
 
 const RADIUS_PRESETS: Record<Characteristics["borderCharacter"], BrandTheme["border"]["radius"]> = {
   sharp:              { none: "0", sm: "0",       md: "0.125rem", lg: "0.25rem",  xl: "0.375rem", full: "9999px" },
@@ -169,6 +172,7 @@ export function composeTheme(output: ThemeGenerationOutput): ComposeResult {
   const fontPair = getFontPair(output.typography.fontPairId);
 
   const theme: BrandTheme = {
+    mode: "light",
     identity: {
       name:        output.brand.name,
       description: output.brand.description,
@@ -203,4 +207,86 @@ export function composeTheme(output: ThemeGenerationOutput): ComposeResult {
   };
 
   return { theme, adjustments };
+}
+
+/**
+ * Derive a dark-mode counterpart to a light theme.
+ *
+ * Approach:
+ * - Reverse the 11-stop scales for primary/secondary/neutral so step 50 becomes the
+ *   darkest tone and step 950 becomes the lightest. Step 500 (the brand mid-tone) is
+ *   preserved. This keeps semantic step mapping intact: `primary-100` always reads as
+ *   "very close to the current surface", `primary-900` as "strong contrast".
+ * - If the primary/secondary seed is already very dark (LCH L < 35), brighten it to
+ *   ~L 60 before regenerating its scale. Otherwise primary buttons in dark mode would
+ *   sink into the background.
+ * - Surfaces pull from the reversed neutral's low steps; text from the high steps.
+ * - Semantic colors are re-contrasted against the new dark surface (typically lightened).
+ *
+ * Pure function — does not mutate the input theme.
+ */
+export function deriveDarkVariant(light: BrandTheme): BrandTheme {
+  const primary   = scaleForDarkMode(light.color.primary);
+  const secondary = scaleForDarkMode(light.color.secondary);
+  const neutral   = reverseColorScale(light.color.neutral);
+
+  const surface: BrandTheme["color"]["surface"] = {
+    base:    neutral[50],
+    raised:  neutral[100],
+    overlay: neutral[200],
+  };
+
+  const text: BrandTheme["color"]["text"] = {
+    primary:   ensureTextOnSurface(neutral[950], surface.base),
+    secondary: ensureTextOnSurface(neutral[800], surface.base),
+    muted:     ensureTextOnSurface(neutral[600], surface.base),
+    inverse:   neutral[50],
+  };
+
+  const { fixed: semantic } = fixSemanticContrast(light.color.semantic, surface.base);
+
+  return {
+    ...light,
+    mode: "dark",
+    color: {
+      ...light.color,
+      primary,
+      secondary,
+      neutral,
+      semantic,
+      surface,
+      text,
+    },
+  };
+}
+
+function reverseColorScale(scale: ColorScale): ColorScale {
+  return {
+    50:  scale[950],
+    100: scale[900],
+    200: scale[800],
+    300: scale[700],
+    400: scale[600],
+    500: scale[500],
+    600: scale[400],
+    700: scale[300],
+    800: scale[200],
+    900: scale[100],
+    950: scale[50],
+  };
+}
+
+/**
+ * Produce the dark-mode counterpart of an accent scale.
+ * If the seed (step 500) is already dark, regenerate from a brightened seed first;
+ * otherwise just reverse the existing scale.
+ */
+function scaleForDarkMode(lightScale: ColorScale): ColorScale {
+  const seed = toLch(lightScale[500]);
+  if (seed && typeof seed.l === "number" && seed.l < 35) {
+    const brightened: Lch = { mode: "lch", l: 60, c: seed.c, h: seed.h ?? 0 };
+    const newSeedHex = formatHex(clampChroma(brightened, "lch"));
+    return reverseColorScale(generateColorScale(newSeedHex));
+  }
+  return reverseColorScale(lightScale);
 }

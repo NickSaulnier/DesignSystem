@@ -84,6 +84,8 @@ export const BorderWidthSchema = z.object({
 });
 
 export const BrandThemeSchema = z.object({
+  mode: z.enum(["light", "dark"]).default("light"),
+
   identity: z.object({
     name:        z.string().min(1),
     description: z.string(),

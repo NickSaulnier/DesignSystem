@@ -1,6 +1,7 @@
 import type { BrandTheme } from "./schema.js";
 
 export const defaultTheme: BrandTheme = {
+  mode: "light",
   identity: {
     name: "Default",
     description: "Neutral baseline theme — calm, accessible, professional.",

@@ -1,7 +1,7 @@
 export { generateTheme, DEFAULT_MODEL } from "./generate.js";
 export type { GenerateOptions, GenerateResult } from "./generate.js";
 
-export { composeTheme } from "./compose.js";
+export { composeTheme, deriveDarkVariant } from "./compose.js";
 export type { ComposeResult } from "./compose.js";
 
 export { generateColorScale, generateNeutralScale } from "./color.js";

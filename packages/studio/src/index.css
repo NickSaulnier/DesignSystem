@@ -85,6 +85,48 @@ img, svg { display: block; }
   color: var(--ds-text-muted);
 }
 
+/* --------- Mode toggle (Light / Auto / Dark) --------- */
+
+.mode-toggle {
+  display: inline-flex;
+  align-items: stretch;
+  padding: 2px;
+  background: var(--ds-surface-overlay);
+  border: var(--ds-border-thin) solid var(--ds-color-neutral-200);
+  border-radius: var(--ds-radius-full);
+  gap: 2px;
+}
+
+.mode-toggle__option {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-xs);
+  padding: var(--ds-space-xs) var(--ds-space-sm);
+  font-family: var(--ds-font-body);
+  font-size: var(--ds-text-xs-size);
+  font-weight: var(--ds-weight-medium);
+  color: var(--ds-text-muted);
+  background: transparent;
+  border: none;
+  border-radius: var(--ds-radius-full);
+  cursor: pointer;
+  transition: background var(--ds-duration-fast) var(--ds-easing-standard),
+              color      var(--ds-duration-fast) var(--ds-easing-standard);
+}
+
+.mode-toggle__option:hover:not(.mode-toggle__option--active) {
+  color: var(--ds-text-secondary);
+}
+
+.mode-toggle__option--active {
+  color: var(--ds-text-inverse);
+  background: var(--ds-color-primary-500);
+}
+
+.mode-toggle__label {
+  font-size: inherit;
+}
+
 .studio__main {
   flex: 1;
   padding: var(--ds-space-xl);
