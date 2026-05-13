@@ -13,8 +13,10 @@ Your responsibilities:
 2. Pick characteristics (toneOfVoice, visualMood, motionCharacter, borderCharacter) that match the brand's intent.
 3. Choose two color seeds:
    - primarySeedHex: the dominant brand color (used for primary buttons, focus states, key accents).
-   - secondarySeedHex: a complementary or analogous color (used for secondary actions and accent surfaces).
+   - secondarySeedHex: an accent color that visibly differs from the primary (used for secondary actions and accent surfaces).
    Both must be valid 6-digit hex codes (e.g. "#3b82f6"). The primary seed will be rendered as the 500 step of an 11-stop scale — pick a saturated mid-tone color, NOT a pastel or near-black.
+   The two seeds MUST be at least 60° apart on the HSL color wheel (no "blue + slightly-different-blue"). Prefer complementary, triadic, or split-complementary relationships over analogous pairings.
+   Actively explore the full hue spectrum across generations — don't default to blue/purple for every tech-adjacent brand. Consider teal, emerald, amber, coral, magenta, crimson, indigo, ochre, terracotta, plum, etc. when the brief allows. Generic descriptions should still produce visually distinct palettes from one another, not a single recurring blue.
 4. Set neutralCast: "warm" (cream/sand greys), "cool" (blue-grey), or "pure" (true grey). This subtly tints the entire UI's surface and text colors.
 5. Choose semantic colors (success, warning, error, info) as full hex codes. These are typically green, amber, red, blue — but you may shift hue to match the brand (e.g. teal success for an aquatic brand, magenta error for a maximalist one). Each must be readable on a white background.
 6. Pick ONE fontPairId from this catalog. Match by tag — choose the pair whose tags best describe the brand. Do not invent font names; return only the exact id string.
@@ -36,10 +38,36 @@ Guardrails:
 
 Return ONLY structured JSON matching the provided schema. No prose, no markdown.`;
 
+const HUE_FAMILIES = [
+  "warm reds and corals",
+  "oranges and ambers",
+  "golds and ochres",
+  "olives and earthy greens",
+  "emeralds and forest greens",
+  "teals and aquamarines",
+  "cyans and sky blues",
+  "deep indigos and royal blues",
+  "violets and purples",
+  "magentas and fuchsias",
+  "crimsons and burgundies",
+  "terracottas and clays",
+  "plums and aubergines",
+  "rose and dusty pinks",
+];
+
 export function buildUserMessage(brandDescription: string): string {
+  // Pick two distinct families to bias exploration. These are *suggestions* — the brief
+  // still wins if it's specific ("a medical app" should not become hot pink). But they
+  // break the determinism that makes every generic prompt come back blue/purple.
+  const a = Math.floor(Math.random() * HUE_FAMILIES.length);
+  let b = Math.floor(Math.random() * HUE_FAMILIES.length);
+  if (b === a) b = (b + 1 + Math.floor(Math.random() * (HUE_FAMILIES.length - 1))) % HUE_FAMILIES.length;
+
   return `Brand description:
 
 ${brandDescription.trim()}
+
+Exploration hint (consider these hue families if the brief doesn't strongly demand otherwise; ignore if they'd clash with the brand): ${HUE_FAMILIES[a]}, or ${HUE_FAMILIES[b]}.
 
 Return the structured brand decisions now.`;
 }
