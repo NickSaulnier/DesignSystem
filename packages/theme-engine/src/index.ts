@@ -1,5 +1,10 @@
-export { generateTheme, DEFAULT_MODEL } from "./generate.js";
-export type { GenerateOptions, GenerateResult } from "./generate.js";
+export { generateTheme, generateThemeStreamed, DEFAULT_MODEL } from "./generate.js";
+export type {
+  GenerateOptions,
+  GenerateResult,
+  GenerationPhase,
+  ProgressEvent,
+} from "./generate.js";
 
 export { composeTheme, deriveDarkVariant } from "./compose.js";
 export type { ComposeResult } from "./compose.js";

@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 import dotenv from "dotenv";
-import { generateTheme } from "@design-system/theme-engine";
+import { generateTheme, generateThemeStreamed } from "@design-system/theme-engine";
 
 const here = dirname(fileURLToPath(import.meta.url));
 
@@ -34,20 +34,75 @@ export default defineConfig({
             return;
           }
 
+          let body: { description?: string };
           try {
             const chunks: Buffer[] = [];
             for await (const chunk of req) chunks.push(Buffer.from(chunk));
-            const body = JSON.parse(Buffer.concat(chunks).toString("utf8")) as { description?: string };
+            body = JSON.parse(Buffer.concat(chunks).toString("utf8"));
+          } catch {
+            res.statusCode = 400;
+            res.setHeader("Content-Type", "application/json");
+            res.end(JSON.stringify({ error: "Invalid JSON body." }));
+            return;
+          }
 
-            if (!body.description || typeof body.description !== "string") {
-              res.statusCode = 400;
-              res.setHeader("Content-Type", "application/json");
-              res.end(JSON.stringify({ error: "Missing 'description' string in request body." }));
-              return;
+          if (!body.description || typeof body.description !== "string") {
+            res.statusCode = 400;
+            res.setHeader("Content-Type", "application/json");
+            res.end(JSON.stringify({ error: "Missing 'description' string in request body." }));
+            return;
+          }
+
+          const accept     = req.headers.accept ?? "";
+          const wantsSSE   = accept.includes("text/event-stream");
+          const started    = Date.now();
+
+          // Abort the engine call if the client disconnects (cancels the fetch).
+          const abortController = new AbortController();
+          req.on("close",  () => abortController.abort());
+          req.on("aborted", () => abortController.abort());
+
+          if (wantsSSE) {
+            res.statusCode = 200;
+            res.setHeader("Content-Type", "text/event-stream");
+            res.setHeader("Cache-Control", "no-cache");
+            res.setHeader("Connection", "keep-alive");
+            // Disable proxy buffering — keeps phase events from being held back.
+            res.setHeader("X-Accel-Buffering", "no");
+
+            const sendFrame = (data: unknown) => {
+              res.write(`data: ${JSON.stringify(data)}\n\n`);
+            };
+
+            try {
+              for await (const event of generateThemeStreamed(body.description, {
+                signal: abortController.signal,
+              })) {
+                if (event.type === "done") {
+                  const elapsed = Date.now() - started;
+                  sendFrame({
+                    type: "done",
+                    result: { ...event.result, elapsedMs: elapsed },
+                  });
+                } else {
+                  sendFrame(event);
+                }
+              }
+            } catch (err) {
+              const message = err instanceof Error ? err.message : String(err);
+              console.error("[theme-engine-api] streamed generation failed:", message);
+              sendFrame({ type: "error", message });
+            } finally {
+              res.end();
             }
+            return;
+          }
 
-            const started = Date.now();
-            const result  = await generateTheme(body.description);
+          // Non-streaming JSON response (preserves backwards compatibility).
+          try {
+            const result  = await generateTheme(body.description, {
+              signal: abortController.signal,
+            });
             const elapsed = Date.now() - started;
 
             res.statusCode = 200;

@@ -1,8 +1,24 @@
 import { useState, type FormEvent } from "react";
 import { Button } from "@design-system/components";
 import type { BrandTheme } from "@design-system/tokens";
+import type { GenerationPhase } from "@design-system/theme-engine";
 
 export type GenerationStatus = "idle" | "generating" | "success" | "error";
+
+const PHASE_COPY: Record<GenerationPhase, { title: string; body: string }> = {
+  analyzing: {
+    title: "Analyzing brand…",
+    body:  "Claude is reading the description and reasoning about personality, palette, and typography.",
+  },
+  tokens: {
+    title: "Generating tokens…",
+    body:  "Streaming color seeds, font choice, and characteristic enums.",
+  },
+  accessibility: {
+    title: "Verifying contrast…",
+    body:  "Expanding scales and enforcing WCAG AA on every text/surface pair.",
+  },
+};
 
 export interface HistoryEntry {
   description: string;
@@ -23,6 +39,7 @@ export interface GenerationMeta {
 
 interface BrandInputProps {
   status:          GenerationStatus;
+  phase:           GenerationPhase | null;
   errorMessage:    string | null;
   lastMeta:        GenerationMeta | null;
   history:         HistoryEntry[];
@@ -54,6 +71,7 @@ const PRESETS: Array<{ label: string; value: string }> = [
 
 export function BrandInput({
   status,
+  phase,
   errorMessage,
   lastMeta,
   history,
@@ -131,8 +149,12 @@ export function BrandInput({
         <section className="brand-input__section brand-input__status brand-input__status--working">
           <div className="brand-input__spinner" aria-hidden="true" />
           <div>
-            <strong>Generating theme…</strong>
-            <p>Claude is analyzing the brand and selecting design tokens.</p>
+            <strong>{phase ? PHASE_COPY[phase].title : "Generating theme…"}</strong>
+            <p>
+              {phase
+                ? PHASE_COPY[phase].body
+                : "Claude is analyzing the brand and selecting design tokens."}
+            </p>
           </div>
         </section>
       )}

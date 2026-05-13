@@ -5,7 +5,10 @@ import {
   safeParseTheme,
   type BrandTheme,
 } from "@design-system/tokens";
-import { deriveDarkVariant } from "@design-system/theme-engine";
+import {
+  deriveDarkVariant,
+  type GenerationPhase,
+} from "@design-system/theme-engine";
 import { Gallery } from "./Gallery.js";
 import {
   BrandInput,
@@ -13,7 +16,7 @@ import {
   type GenerationStatus,
   type HistoryEntry,
 } from "./BrandInput.js";
-import { generateThemeFromDescription } from "./api.js";
+import { streamThemeGeneration } from "./api.js";
 
 const HISTORY_LIMIT = 12;
 const HISTORY_KEY   = "ds-studio:theme-history:v1";
@@ -73,6 +76,7 @@ export function App() {
   const [history, setHistory]       = useState<HistoryEntry[]>(() => loadHistory());
   const [modePref, setModePref]     = useState<ModePreference>(() => loadMode());
   const [systemDark, setSystemDark] = useState<boolean>(() => prefersDark());
+  const [phase, setPhase]           = useState<GenerationPhase | null>(null);
   const abortRef                    = useRef<AbortController | null>(null);
   const firstRender                 = useRef(true);
 
@@ -115,29 +119,43 @@ export function App() {
 
     setStatus("generating");
     setError(null);
+    setPhase(null);
 
     try {
-      const result = await generateThemeFromDescription(description, controller.signal);
-      if (controller.signal.aborted) return;
+      for await (const event of streamThemeGeneration(description, controller.signal)) {
+        if (controller.signal.aborted) return;
 
-      setTheme(result.theme);
-      setLastMeta({
-        adjustments: result.adjustments,
-        usage:       result.usage,
-        elapsedMs:   result.elapsedMs,
-      });
-      setHistory((prev) => [
-        { description, theme: result.theme, createdAt: Date.now() },
-        ...prev,
-      ].slice(0, HISTORY_LIMIT));
-      setStatus("success");
+        if (event.type === "phase") {
+          setPhase(event.phase);
+        } else if (event.type === "done") {
+          const result = event.result;
+          setTheme(result.theme);
+          setLastMeta({
+            adjustments: result.adjustments,
+            usage:       result.usage,
+            elapsedMs:   result.elapsedMs,
+          });
+          setHistory((prev) => [
+            { description, theme: result.theme, createdAt: Date.now() },
+            ...prev,
+          ].slice(0, HISTORY_LIMIT));
+          setStatus("success");
+          setPhase(null);
+        } else if (event.type === "error") {
+          setError(event.message);
+          setStatus("error");
+          setPhase(null);
+        }
+      }
     } catch (err) {
       if (controller.signal.aborted) {
         setStatus("idle");
+        setPhase(null);
         return;
       }
       setError(err instanceof Error ? err.message : String(err));
       setStatus("error");
+      setPhase(null);
     } finally {
       if (abortRef.current === controller) abortRef.current = null;
     }
@@ -146,6 +164,7 @@ export function App() {
   const handleCancel = useCallback(() => {
     abortRef.current?.abort();
     setStatus("idle");
+    setPhase(null);
   }, []);
 
   const handleReset = useCallback(() => {
@@ -184,6 +203,7 @@ export function App() {
         <aside className="studio__sidebar">
           <BrandInput
             status={status}
+            phase={phase}
             errorMessage={errorMessage}
             lastMeta={lastMeta}
             history={history}
