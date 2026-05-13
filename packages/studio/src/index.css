@@ -521,3 +521,89 @@ img, svg { display: block; }
   background: var(--ds-surface-overlay);
   border-radius: var(--ds-radius-sm);
 }
+
+/* --------- Export panel --------- */
+
+.export-panel {
+  border-top: var(--ds-border-thin) solid var(--ds-color-neutral-200);
+  padding-top: var(--ds-space-lg);
+}
+
+.export-panel__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-space-xs);
+  border-bottom: var(--ds-border-thin) solid var(--ds-color-neutral-200);
+  margin-bottom: var(--ds-space-md);
+}
+
+.export-panel__tab {
+  font-family: var(--ds-font-body);
+  font-size: var(--ds-text-sm-size);
+  font-weight: var(--ds-weight-medium);
+  color: var(--ds-text-muted);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: var(--ds-space-sm) var(--ds-space-md);
+  margin-bottom: -1px;
+  cursor: pointer;
+  transition: color var(--ds-duration-fast) var(--ds-easing-standard),
+              border-color var(--ds-duration-fast) var(--ds-easing-standard);
+}
+
+.export-panel__tab:hover:not(.export-panel__tab--active) {
+  color: var(--ds-text-secondary);
+}
+
+.export-panel__tab--active {
+  color: var(--ds-color-primary-600);
+  border-bottom-color: var(--ds-color-primary-500);
+}
+
+.export-panel__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-space-md);
+  padding: var(--ds-space-xs) var(--ds-space-md);
+  background: var(--ds-surface-raised);
+  border: var(--ds-border-thin) solid var(--ds-color-neutral-200);
+  border-bottom: none;
+  border-top-left-radius: var(--ds-radius-md);
+  border-top-right-radius: var(--ds-radius-md);
+}
+
+.export-panel__filename {
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-xs-size);
+  color: var(--ds-text-secondary);
+}
+
+.export-panel__actions {
+  display: flex;
+  gap: var(--ds-space-xs);
+}
+
+.export-panel__code {
+  margin: 0;
+  padding: var(--ds-space-md);
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-xs-size);
+  line-height: var(--ds-line-height-base);
+  color: var(--ds-text-primary);
+  background: var(--ds-surface-overlay);
+  border: var(--ds-border-thin) solid var(--ds-color-neutral-200);
+  border-bottom-left-radius: var(--ds-radius-md);
+  border-bottom-right-radius: var(--ds-radius-md);
+  max-height: 28rem;
+  overflow: auto;
+  white-space: pre;
+}
+
+.export-panel__code code {
+  font-family: inherit;
+  font-size: inherit;
+  background: transparent;
+  padding: 0;
+}

@@ -29,3 +29,13 @@ export {
 } from "./css.js";
 
 export { defaultTheme } from "./defaults.js";
+
+export {
+  themeToTailwindConfig,
+  themeToTailwindConfigString,
+} from "./exports/tailwind.js";
+
+export {
+  themeToFigmaTokens,
+  themeToFigmaTokensString,
+} from "./exports/figma.js";
