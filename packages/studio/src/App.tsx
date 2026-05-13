@@ -10,6 +10,7 @@ import {
   type GenerationPhase,
 } from "@nicksaulnier/design-system-theme-engine";
 import { Gallery } from "./Gallery.js";
+import { SettingsPanel } from "./SettingsPanel.js";
 import {
   BrandInput,
   type GenerationMeta,
@@ -77,6 +78,7 @@ export function App() {
   const [modePref, setModePref]     = useState<ModePreference>(() => loadMode());
   const [systemDark, setSystemDark] = useState<boolean>(() => prefersDark());
   const [phase, setPhase]           = useState<GenerationPhase | null>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const abortRef                    = useRef<AbortController | null>(null);
   const firstRender                 = useRef(true);
 
@@ -196,7 +198,20 @@ export function App() {
             </div>
           </div>
         </div>
-        <ModeToggle value={modePref} onChange={setModePref} />
+        <div className="studio__header-actions">
+          <button
+            type="button"
+            className="studio__customize"
+            onClick={() => setSettingsOpen((v) => !v)}
+            aria-pressed={settingsOpen}
+            aria-label="Customize tokens"
+            title="Customize tokens"
+          >
+            <span aria-hidden="true">⚙</span>
+            <span>Customize</span>
+          </button>
+          <ModeToggle value={modePref} onChange={setModePref} />
+        </div>
       </header>
 
       <main className="studio__split">
@@ -218,6 +233,13 @@ export function App() {
           <Gallery theme={displayTheme} />
         </section>
       </main>
+
+      <SettingsPanel
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        theme={theme}
+        onApply={setTheme}
+      />
     </div>
   );
 }

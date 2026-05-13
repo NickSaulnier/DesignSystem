@@ -9,6 +9,22 @@ export type {
 export { composeTheme, deriveDarkVariant } from "./compose.js";
 export type { ComposeResult } from "./compose.js";
 
+export {
+  applyTokenEdits,
+  extractEditableSnapshot,
+  RADIUS_PRESETS,
+  SHADOW_PRESETS,
+  MOTION_PRESETS,
+} from "./customize.js";
+export type {
+  TokenEdits,
+  EditableSnapshot,
+  NeutralCast,
+  BorderCharacter,
+  VisualMood,
+  MotionCharacter,
+} from "./customize.js";
+
 export { generateColorScale, generateNeutralScale } from "./color.js";
 
 export { contrast, ensureContrast, ensureTextOnSurface } from "./accessibility.js";
