@@ -8,9 +8,10 @@ Built as four composable packages: a token schema, a component library, a Claude
 
 - One prompt in plain language → full token set (color scales, typography pair, semantic colors, radius/shadow/motion presets) in ~5–10 seconds.
 - Animated, schema-validated, WCAG-AA-enforced. No invalid hex codes, no muddy color scales, no contrast failures.
+- **18-component library** — buttons, forms, overlays, navigation, data display. Every component drives off `--ds-*` CSS variables, so a single theme swap retones the whole tree.
 - **Live retoning** — the entire UI (chrome included) reflows in one frame via CSS variables. No re-render, no provider, no runtime CSS-in-JS.
 - **Streamed progress** — UI shows phase events as Claude works (`Analyzing brand…` → `Generating tokens…` → `Verifying contrast…`).
-- **Dark mode** derived deterministically from any generated theme. Toggle Light / Auto / Dark in the header.
+- **Dark mode** derived deterministically from any generated theme. Toggle Light / Auto / Dark in the header. Native browser controls (select popups, scrollbars) retone via `color-scheme` too.
 - **Export** the result as CSS variables, a drop-in `tailwind.config.js`, or W3C Design Tokens JSON.
 - **Persistent history** of every generation, restorable in one click.
 
@@ -133,11 +134,26 @@ Every variable is prefixed `--ds-` to avoid collisions. The default theme is a n
 
 React components consuming `--ds-*` CSS variables — no JS-side styling. One stylesheet (`styles.css`), zero runtime overhead.
 
-Shipped: `Alert`, `Avatar`, `Badge`, `Button`, `Card` (+ `CardHeader` / `CardBody` / `CardFooter` / `CardTitle` / `CardDescription`), `Input`, `Toggle`.
+Shipped (grouped by use):
+
+| Category | Components |
+|---|---|
+| **Actions** | `Button`, `Menu` (+ `MenuTrigger` / `MenuContent` / `MenuItem` / `MenuSeparator`) |
+| **Forms** | `Input`, `Select`, `Slider`, `Toggle` |
+| **Feedback** | `Alert`, `Badge`, `Progress`, `Tooltip`, `Skeleton` |
+| **Containment** | `Card` (+ `CardHeader` / `CardBody` / `CardFooter` / `CardTitle` / `CardDescription`), `Modal` (+ `ModalHeader` / `ModalBody` / `ModalFooter` / `ModalTitle` / `ModalDescription` / `ModalCloseButton`) |
+| **Navigation** | `Tabs` (+ `TabList` / `Tab` / `TabPanel`), `Breadcrumb` (+ `BreadcrumbItem`), `Pagination` |
+| **Data display** | `Table` (+ `TableHead` / `TableBody` / `TableFoot` / `TableRow` / `TableHeadCell` / `TableCell`), `Avatar` |
+
+Overlay components (`Modal`, `Menu`) render through a synchronous `Portal` to `document.body`; `Modal` trap-focuses on open and locks body scroll. All components are keyboard-navigable per WAI-ARIA conventions.
 
 ```tsx
 import "@nicksaulnier/design-system-components/styles.css";
-import { Button, Card, Badge, Input, Toggle } from "@nicksaulnier/design-system-components";
+import {
+  Button, Card, Badge, Input, Toggle,
+  Modal, Tooltip, Menu, MenuTrigger, MenuContent, MenuItem,
+  Tabs, TabList, Tab, TabPanel, Table, Pagination, Breadcrumb,
+} from "@nicksaulnier/design-system-components";
 ```
 
 ### `@nicksaulnier/design-system-theme-engine` *(private)*
@@ -193,9 +209,14 @@ DesignSystem/
     │       └── index.ts
     ├── components/
     │   └── src/
-    │       ├── Alert.tsx, Avatar.tsx, Badge.tsx, Button.tsx,
-    │       ├── Card.tsx, Input.tsx, Toggle.tsx
-    │       ├── styles.css          # All component styles, --ds-*-driven
+    │       ├── Alert.tsx, Avatar.tsx, Badge.tsx, Breadcrumb.tsx,
+    │       ├── Button.tsx, Card.tsx, Input.tsx, Menu.tsx, Modal.tsx,
+    │       ├── Pagination.tsx, Progress.tsx, Select.tsx, Skeleton.tsx,
+    │       ├── Slider.tsx, Table.tsx, Tabs.tsx, Toggle.tsx, Tooltip.tsx
+    │       ├── internal/
+    │       │   ├── Portal.tsx          # Synchronous createPortal wrapper
+    │       │   └── useFocusTrap.ts     # Tab cycling + previous-focus restore
+    │       ├── styles.css              # All component styles, --ds-*-driven
     │       └── index.ts
     ├── theme-engine/
     │   └── src/
@@ -285,13 +306,15 @@ On push to `main`, [`.github/workflows/release.yml`](.github/workflows/release.y
 
 ## Roadmap
 
-The core platform is in place: token schema, components, Claude-powered generation, streamed progress, dark mode, exports, persistent history. From here, four themes for the next pass:
+The core platform is in place: token schema, an 18-component library, Claude-powered generation, streamed progress, dark mode, exports, persistent history. From here, five themes for the next pass:
 
 ### Coverage
 
-- [ ] **More components.** Tabs, Modal/Dialog, Select, Tooltip, Menu/Dropdown, Slider, Progress, Skeleton, Breadcrumb, Pagination, Table. The longer the component tail, the more theme-stress each generation gets.
+- [x] ~~**More components.**~~ ✅ Shipped — 11 new components (Modal, Tooltip, Menu, Select, Slider, Progress, Tabs, Table, Pagination, Breadcrumb, Skeleton) plus an internal Portal + focus-trap layer.
 - [ ] **Custom font input.** Today Claude picks one of 10 curated Google Fonts pairs. Allow users to supply a CSS `@import` URL or `@font-face` definition and have the engine treat it as the brand body/heading.
 - [ ] **More export formats.** Style Dictionary, Theo, iOS Asset Catalog, Android `colors.xml`. Pure functions on `BrandTheme`, same shape as the existing Tailwind/Figma adapters.
+- [ ] **Form-state primitives.** A small `<Form>` + `<Field>` pairing that wires labels, hints, errors, and `aria-describedby` automatically. Today every consumer threads `error`/`hint`/`label` props by hand on each input.
+- [ ] **Date/time inputs.** `DatePicker`, `TimePicker`, and `DateRangePicker`. Largest gap in the current form surface; would also exercise locale-aware tokens.
 
 ### Studio depth
 
