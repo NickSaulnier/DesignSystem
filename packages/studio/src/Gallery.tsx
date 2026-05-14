@@ -75,23 +75,338 @@ interface GalleryProps {
 export function Gallery({ theme }: GalleryProps) {
   return (
     <div className="gallery">
-      <Intro theme={theme} />
-      <TypographySection theme={theme} />
-      <ColorSection theme={theme} />
-      <ButtonSection />
-      <BadgeSection />
-      <CardSection />
-      <FormSection />
-      <AlertSection />
-      <AvatarSection />
-      <ToggleSection />
-      <FormExpansionsSection />
-      <OverlaySection />
-      <NavigationDataSection />
-      <SemanticSection />
-      <ExportPanel theme={theme} />
+      <Hero theme={theme} />
+      <Tabs defaultValue="overview" variant="underline">
+        <TabList ariaLabel="Gallery sections">
+          <Tab value="overview">Overview</Tab>
+          <Tab value="foundations">Foundations</Tab>
+          <Tab value="components">Components</Tab>
+          <Tab value="export">Export</Tab>
+        </TabList>
+        <TabPanel value="overview">
+          <OverviewTab theme={theme} />
+        </TabPanel>
+        <TabPanel value="foundations">
+          <FoundationsTab theme={theme} />
+        </TabPanel>
+        <TabPanel value="components">
+          <ComponentsTab />
+        </TabPanel>
+        <TabPanel value="export">
+          <div className="gallery-tab">
+            <ExportPanel theme={theme} />
+          </div>
+        </TabPanel>
+      </Tabs>
     </div>
   );
+}
+
+// ============================================================================
+// Hero — always visible above the tab strip. The brand's first impression.
+// ============================================================================
+
+function Hero({ theme }: { theme: BrandTheme }) {
+  return (
+    <section className="gallery-hero">
+      <div className="gallery-hero__copy">
+        <div className="gallery-hero__chips">
+          {theme.identity.personality.map((trait) => (
+            <Badge key={trait} variant="soft" tone="primary">
+              {trait}
+            </Badge>
+          ))}
+        </div>
+        <h1 className="gallery-hero__name">{theme.identity.name}</h1>
+        <p className="gallery-hero__description">{theme.identity.description}</p>
+        <p className="gallery-hero__sample">
+          The quick brown fox jumps over the lazy dog. — set in <code>{theme.typography.fontFamily.body.split(",")[0]}</code>
+        </p>
+      </div>
+      <div className="gallery-hero__swatches">
+        <HeroSwatch label="Primary"   hex={theme.color.primary[500]} />
+        <HeroSwatch label="Secondary" hex={theme.color.secondary[500]} />
+        <HeroSwatch label="Neutral"   hex={theme.color.neutral[500]} />
+      </div>
+    </section>
+  );
+}
+
+function HeroSwatch({ label, hex }: { label: string; hex: string }) {
+  const text = swatchTextColor(hex);
+  return (
+    <div className="gallery-hero__swatch" style={{ background: hex, color: text }}>
+      <span className="gallery-hero__swatch-label">{label}</span>
+      <span className="gallery-hero__swatch-hex">{hex}</span>
+    </div>
+  );
+}
+
+// ============================================================================
+// Tabs
+// ============================================================================
+
+function OverviewTab({ theme }: { theme: BrandTheme }) {
+  return (
+    <div className="gallery-tab">
+      <ComposedScenarioSection />
+      <ButtonSection />
+      <PaletteHighlightSection theme={theme} />
+    </div>
+  );
+}
+
+function FoundationsTab({ theme }: { theme: BrandTheme }) {
+  return (
+    <div className="gallery-tab">
+      <ColorPairingsSection theme={theme} />
+      <ColorSection theme={theme} />
+      <TypographySection theme={theme} />
+      <SpacingSection theme={theme} />
+      <MotionSection theme={theme} />
+    </div>
+  );
+}
+
+function ComponentsTab() {
+  return (
+    <div className="gallery-tab">
+      <Tabs defaultValue="actions" variant="pill">
+        <TabList ariaLabel="Component categories">
+          <Tab value="actions">Actions</Tab>
+          <Tab value="forms">Forms</Tab>
+          <Tab value="overlays">Overlays &amp; feedback</Tab>
+          <Tab value="data">Data &amp; navigation</Tab>
+        </TabList>
+        <TabPanel value="actions">
+          <div className="gallery-subtab">
+            <ButtonSection />
+            <BadgeSection />
+            <AvatarSection />
+          </div>
+        </TabPanel>
+        <TabPanel value="forms">
+          <div className="gallery-subtab">
+            <FormSection />
+            <ToggleSection />
+            <FormExpansionsSection />
+          </div>
+        </TabPanel>
+        <TabPanel value="overlays">
+          <div className="gallery-subtab">
+            <AlertSection />
+            <CardSection />
+            <OverlaySection />
+            <SemanticSection />
+          </div>
+        </TabPanel>
+        <TabPanel value="data">
+          <div className="gallery-subtab">
+            <NavigationDataSection />
+          </div>
+        </TabPanel>
+      </Tabs>
+    </div>
+  );
+}
+
+// ============================================================================
+// Overview helpers
+// ============================================================================
+
+function ComposedScenarioSection() {
+  const [name, setName]     = useState("Ada Lovelace");
+  const [emails, setEmails] = useState(true);
+  return (
+    <section className="gallery__section">
+      <h2 className="gallery__section-title">In context</h2>
+      <p className="gallery__section-description">
+        A small composed scene — Card, Input, Toggle, and Buttons working together as a real UI fragment.
+        Useful for sanity-checking how the theme reads when components compose, not just in isolation.
+      </p>
+      <div style={{ maxWidth: "32rem" }}>
+        <Card elevation="elevated">
+          <CardHeader>
+            <CardTitle>Update profile</CardTitle>
+            <CardDescription>Your changes will apply across all signed-in devices.</CardDescription>
+          </CardHeader>
+          <CardBody>
+            <div style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-md)" }}>
+              <Input
+                label="Display name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                hint="Shown on comments, mentions, and your public profile."
+              />
+              <Toggle
+                checked={emails}
+                onChange={setEmails}
+                label="Send me product update emails"
+              />
+            </div>
+          </CardBody>
+          <CardFooter>
+            <Button variant="ghost">Cancel</Button>
+            <Button variant="primary">Save changes</Button>
+          </CardFooter>
+        </Card>
+      </div>
+    </section>
+  );
+}
+
+function PaletteHighlightSection({ theme }: { theme: BrandTheme }) {
+  return (
+    <section className="gallery__section">
+      <h2 className="gallery__section-title">Brand palette</h2>
+      <p className="gallery__section-description">
+        Primary scale at a glance. Full palettes and contrast pairings live in <strong>Foundations</strong>.
+      </p>
+      <PaletteRow label="Primary" scale={theme.color.primary} />
+    </section>
+  );
+}
+
+// ============================================================================
+// Foundations helpers
+// ============================================================================
+
+function ColorPairingsSection({ theme }: { theme: BrandTheme }) {
+  type Pair = { label: string; fg: string; bg: string; minRatio: number };
+  const pairs: Pair[] = [
+    { label: "Body text on surface",         fg: theme.color.text.primary,   bg: theme.color.surface.base,    minRatio: 4.5 },
+    { label: "Secondary text on surface",    fg: theme.color.text.secondary, bg: theme.color.surface.base,    minRatio: 4.5 },
+    { label: "Muted text on surface",        fg: theme.color.text.muted,     bg: theme.color.surface.base,    minRatio: 3.0 },
+    { label: "Inverse text on primary 500",  fg: theme.color.text.inverse,   bg: theme.color.primary[500],    minRatio: 4.5 },
+    { label: "Inverse text on secondary 500",fg: theme.color.text.inverse,   bg: theme.color.secondary[500],  minRatio: 4.5 },
+    { label: "Success on surface",           fg: theme.color.semantic.success, bg: theme.color.surface.base,  minRatio: 4.5 },
+    { label: "Warning on surface",           fg: theme.color.semantic.warning, bg: theme.color.surface.base,  minRatio: 4.5 },
+    { label: "Error on surface",             fg: theme.color.semantic.error,   bg: theme.color.surface.base,  minRatio: 4.5 },
+  ];
+
+  return (
+    <section className="gallery__section">
+      <h2 className="gallery__section-title">Contrast pairings</h2>
+      <p className="gallery__section-description">
+        Practical foreground / background combinations with their measured WCAG ratios. Body text needs ≥ 4.5:1 for AA, large text needs 3.0:1.
+      </p>
+      <div className="gallery-pairings">
+        {pairs.map((p) => {
+          const ratio = contrastRatio(p.fg, p.bg);
+          const passes = ratio >= p.minRatio;
+          const aaa    = ratio >= 7.0;
+          const verdict = aaa ? "AAA" : passes ? "AA" : "Fails";
+          return (
+            <div key={p.label} className="gallery-pairing">
+              <div className="gallery-pairing__sample" style={{ background: p.bg, color: p.fg }}>
+                Aa
+              </div>
+              <div className="gallery-pairing__body">
+                <div className="gallery-pairing__label">{p.label}</div>
+                <div className="gallery-pairing__hexes">
+                  <code>{p.fg.toLowerCase()}</code> on <code>{p.bg.toLowerCase()}</code>
+                </div>
+              </div>
+              <div className={`gallery-pairing__verdict gallery-pairing__verdict--${passes ? (aaa ? "aaa" : "aa") : "fail"}`}>
+                <strong>{ratio.toFixed(2)}:1</strong>
+                <span>{verdict}</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function SpacingSection({ theme }: { theme: BrandTheme }) {
+  const steps = ["xs", "sm", "md", "lg", "xl", "2xl", "3xl"] as const;
+  return (
+    <section className="gallery__section">
+      <h2 className="gallery__section-title">Spacing</h2>
+      <p className="gallery__section-description">
+        Seven-step scale built on a {theme.spacing.base}px base. Used for padding, gaps, and layout rhythm.
+      </p>
+      <ul className="gallery-spacing">
+        {steps.map((step) => (
+          <li key={step} className="gallery-spacing__row">
+            <span className="gallery-spacing__step">{step}</span>
+            <span className="gallery-spacing__bar" style={{ width: `var(--ds-space-${step})` }} />
+            <code className="gallery-spacing__value">{theme.spacing.scale[step]}</code>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+function MotionSection({ theme }: { theme: BrandTheme }) {
+  const easings: Array<{ key: keyof BrandTheme["motion"]["easing"]; label: string }> = [
+    { key: "standard",   label: "Standard"   },
+    { key: "decelerate", label: "Decelerate" },
+    { key: "accelerate", label: "Accelerate" },
+  ];
+  const durations: Array<{ key: keyof BrandTheme["motion"]["duration"]; label: string }> = [
+    { key: "fast", label: "Fast" },
+    { key: "base", label: "Base" },
+    { key: "slow", label: "Slow" },
+  ];
+
+  return (
+    <section className="gallery__section">
+      <h2 className="gallery__section-title">Motion</h2>
+      <p className="gallery__section-description">
+        Three durations × three easings drive every animation in the system. Hover a row to replay it.
+      </p>
+      <div className="gallery-motion">
+        {durations.map((d) => (
+          <div key={d.key} className="gallery-motion__row">
+            <span className="gallery-motion__label">
+              <strong>{d.label}</strong>
+              <code>{theme.motion.duration[d.key]}</code>
+            </span>
+            <span
+              className="gallery-motion__track"
+              style={
+                {
+                  "--ds-motion-duration": theme.motion.duration[d.key],
+                  "--ds-motion-easing":   theme.motion.easing.standard,
+                } as React.CSSProperties
+              }
+            >
+              <span className="gallery-motion__dot" />
+            </span>
+          </div>
+        ))}
+        <div className="gallery-motion__easings">
+          {easings.map((e) => (
+            <code key={e.key} className="gallery-motion__easing">
+              <strong>{e.label}</strong>
+              {theme.motion.easing[e.key]}
+            </code>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// WCAG relative-luminance contrast — reused for the pairings table.
+function contrastRatio(fg: string, bg: string): number {
+  const lFg = relLuminance(fg);
+  const lBg = relLuminance(bg);
+  const [a, b] = lFg > lBg ? [lFg, lBg] : [lBg, lFg];
+  return (a + 0.05) / (b + 0.05);
+}
+
+function relLuminance(hex: string): number {
+  const rgb = hex.replace("#", "").match(/.{2}/g);
+  if (!rgb || rgb.length < 3) return 0;
+  const [r, g, b] = rgb.slice(0, 3).map((c) => {
+    const v = parseInt(c, 16) / 255;
+    return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+  }) as [number, number, number];
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 
 function FormExpansionsSection() {
@@ -534,22 +849,6 @@ function ToggleSection() {
           size="sm"
         />
         <Toggle checked={true} onChange={() => {}} label="Locked on" disabled />
-      </div>
-    </section>
-  );
-}
-
-function Intro({ theme }: { theme: BrandTheme }) {
-  return (
-    <section className="gallery__intro">
-      <h1>{theme.identity.name}</h1>
-      <p>{theme.identity.description}</p>
-      <div className="gallery__row">
-        {theme.identity.personality.map((trait) => (
-          <Badge key={trait} variant="soft" tone="primary">
-            {trait}
-          </Badge>
-        ))}
       </div>
     </section>
   );
