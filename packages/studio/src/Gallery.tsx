@@ -453,62 +453,128 @@ function FormExpansionsSection() {
         as the rest of the form components.
       </p>
 
-      <div className="gallery__form">
-        <Select
-          label="Country"
-          placeholder="Select a country"
-          value={country}
-          onChange={(e) => setCountry(e.target.value)}
-          options={[
-            { value: "us", label: "United States" },
-            { value: "ca", label: "Canada" },
-            { value: "uk", label: "United Kingdom" },
-            { value: "jp", label: "Japan" },
-            { value: "de", label: "Germany" },
-          ]}
-          hint={country ? `Selected: ${country.toUpperCase()}` : "Required for tax calculation"}
-        />
+      <DemoCard
+        label="Select"
+        source={`const [country, setCountry] = useState("");
 
-        <Select
-          label="Priority"
-          value={priority}
-          onChange={(e) => setPriority(e.target.value)}
-          size="sm"
-        >
-          <option value="low">Low</option>
-          <option value="normal">Normal</option>
-          <option value="high">High</option>
-          <option value="urgent">Urgent</option>
-        </Select>
+<Select
+  label="Country"
+  placeholder="Select a country"
+  value={country}
+  onChange={(e) => setCountry(e.target.value)}
+  options={[
+    { value: "us", label: "United States" },
+    { value: "ca", label: "Canada" },
+    { value: "uk", label: "United Kingdom" },
+    { value: "jp", label: "Japan" },
+    { value: "de", label: "Germany" },
+  ]}
+  hint={country ? \`Selected: \${country.toUpperCase()}\` : "Required for tax calculation"}
+/>
 
-        <Slider
-          label="Volume"
-          value={volume}
-          onChange={setVolume}
-          min={0}
-          max={100}
-          formatValue={(v) => `${v}%`}
-          hint="Use arrow keys for fine adjustment"
-        />
+{/* Children-based options + size variant: */}
+<Select label="Priority" size="sm" value={priority} onChange={(e) => setPriority(e.target.value)}>
+  <option value="low">Low</option>
+  <option value="normal">Normal</option>
+  <option value="high">High</option>
+  <option value="urgent">Urgent</option>
+</Select>`}
+      >
+        <div className="gallery__form">
+          <Select
+            label="Country"
+            placeholder="Select a country"
+            value={country}
+            onChange={(e) => setCountry(e.target.value)}
+            options={[
+              { value: "us", label: "United States" },
+              { value: "ca", label: "Canada" },
+              { value: "uk", label: "United Kingdom" },
+              { value: "jp", label: "Japan" },
+              { value: "de", label: "Germany" },
+            ]}
+            hint={country ? `Selected: ${country.toUpperCase()}` : "Required for tax calculation"}
+          />
 
-        <Slider
-          label="Zoom"
-          value={zoom}
-          onChange={setZoom}
-          min={0.5}
-          max={3}
-          step={0.1}
-          size="sm"
-          formatValue={(v) => `${v.toFixed(1)}×`}
-        />
-      </div>
+          <Select
+            label="Priority"
+            value={priority}
+            onChange={(e) => setPriority(e.target.value)}
+            size="sm"
+          >
+            <option value="low">Low</option>
+            <option value="normal">Normal</option>
+            <option value="high">High</option>
+            <option value="urgent">Urgent</option>
+          </Select>
+        </div>
+      </DemoCard>
 
-      <div style={{ marginTop: "var(--ds-space-lg)", display: "flex", flexDirection: "column", gap: "var(--ds-space-md)" }}>
-        <Progress value={volume} max={100} label="Upload" tone="primary" showValue />
-        <Progress value={72}     max={100} label="Storage used" tone="warning" showValue />
-        <Progress value={100}    max={100} label="Sync complete" tone="success" showValue />
-        <Progress label="Connecting…" />
-      </div>
+      <DemoCard
+        label="Slider"
+        source={`const [volume, setVolume] = useState(40);
+const [zoom, setZoom]     = useState(1.5);
+
+<Slider
+  label="Volume"
+  value={volume}
+  onChange={setVolume}
+  min={0}
+  max={100}
+  formatValue={(v) => \`\${v}%\`}
+  hint="Use arrow keys for fine adjustment"
+/>
+
+<Slider
+  label="Zoom"
+  size="sm"
+  value={zoom}
+  onChange={setZoom}
+  min={0.5}
+  max={3}
+  step={0.1}
+  formatValue={(v) => \`\${v.toFixed(1)}×\`}
+/>`}
+      >
+        <div className="gallery__form">
+          <Slider
+            label="Volume"
+            value={volume}
+            onChange={setVolume}
+            min={0}
+            max={100}
+            formatValue={(v) => `${v}%`}
+            hint="Use arrow keys for fine adjustment"
+          />
+          <Slider
+            label="Zoom"
+            value={zoom}
+            onChange={setZoom}
+            min={0.5}
+            max={3}
+            step={0.1}
+            size="sm"
+            formatValue={(v) => `${v.toFixed(1)}×`}
+          />
+        </div>
+      </DemoCard>
+
+      <DemoCard
+        label="Progress (tones + indeterminate)"
+        source={`<Progress value={volume} max={100} label="Upload"        tone="primary" showValue />
+<Progress value={72}     max={100} label="Storage used" tone="warning" showValue />
+<Progress value={100}    max={100} label="Sync complete" tone="success" showValue />
+
+{/* Indeterminate: omit value */}
+<Progress label="Connecting…" />`}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-md)" }}>
+          <Progress value={volume} max={100} label="Upload" tone="primary" showValue />
+          <Progress value={72}     max={100} label="Storage used" tone="warning" showValue />
+          <Progress value={100}    max={100} label="Sync complete" tone="success" showValue />
+          <Progress label="Connecting…" />
+        </div>
+      </DemoCard>
     </section>
   );
 }
@@ -552,12 +618,22 @@ function NavigationDataSection() {
         Tabs, Breadcrumb, Table, Pagination, and Skeleton — the higher-density display components.
       </p>
 
-      <Breadcrumb separator="›">
-        <BreadcrumbItem href="#">Projects</BreadcrumbItem>
-        <BreadcrumbItem href="#">Acme</BreadcrumbItem>
-        <BreadcrumbItem href="#">Reports</BreadcrumbItem>
-        <BreadcrumbItem current>Q3 Summary</BreadcrumbItem>
-      </Breadcrumb>
+      <DemoCard
+        label="Breadcrumb"
+        source={`<Breadcrumb separator="›">
+  <BreadcrumbItem href="/projects">Projects</BreadcrumbItem>
+  <BreadcrumbItem href="/projects/acme">Acme</BreadcrumbItem>
+  <BreadcrumbItem href="/projects/acme/reports">Reports</BreadcrumbItem>
+  <BreadcrumbItem current>Q3 Summary</BreadcrumbItem>
+</Breadcrumb>`}
+      >
+        <Breadcrumb separator="›">
+          <BreadcrumbItem href="#">Projects</BreadcrumbItem>
+          <BreadcrumbItem href="#">Acme</BreadcrumbItem>
+          <BreadcrumbItem href="#">Reports</BreadcrumbItem>
+          <BreadcrumbItem current>Q3 Summary</BreadcrumbItem>
+        </Breadcrumb>
+      </DemoCard>
 
       <DemoCard
         label="Tabs (underline variant)"
@@ -596,76 +672,154 @@ function NavigationDataSection() {
         </Tabs>
       </DemoCard>
 
-      <Tabs defaultValue="day" variant="pill">
-        <TabList ariaLabel="Time range">
-          <Tab value="day">Day</Tab>
-          <Tab value="week">Week</Tab>
-          <Tab value="month">Month</Tab>
-          <Tab value="year">Year</Tab>
-        </TabList>
-        <TabPanel value="day"><span style={{ color: "var(--ds-text-secondary)" }}>Pill variant — same component, different appearance.</span></TabPanel>
-        <TabPanel value="week"><span style={{ color: "var(--ds-text-secondary)" }}>Week summary placeholder.</span></TabPanel>
-        <TabPanel value="month"><span style={{ color: "var(--ds-text-secondary)" }}>Month summary placeholder.</span></TabPanel>
-        <TabPanel value="year"><span style={{ color: "var(--ds-text-secondary)" }}>Year summary placeholder.</span></TabPanel>
-      </Tabs>
+      <DemoCard
+        label="Tabs (pill variant)"
+        source={`<Tabs defaultValue="day" variant="pill">
+  <TabList ariaLabel="Time range">
+    <Tab value="day">Day</Tab>
+    <Tab value="week">Week</Tab>
+    <Tab value="month">Month</Tab>
+    <Tab value="year">Year</Tab>
+  </TabList>
+  <TabPanel value="day">Day summary…</TabPanel>
+  <TabPanel value="week">Week summary…</TabPanel>
+  <TabPanel value="month">Month summary…</TabPanel>
+  <TabPanel value="year">Year summary…</TabPanel>
+</Tabs>`}
+      >
+        <Tabs defaultValue="day" variant="pill">
+          <TabList ariaLabel="Time range">
+            <Tab value="day">Day</Tab>
+            <Tab value="week">Week</Tab>
+            <Tab value="month">Month</Tab>
+            <Tab value="year">Year</Tab>
+          </TabList>
+          <TabPanel value="day"><span style={{ color: "var(--ds-text-secondary)" }}>Pill variant — same component, different appearance.</span></TabPanel>
+          <TabPanel value="week"><span style={{ color: "var(--ds-text-secondary)" }}>Week summary placeholder.</span></TabPanel>
+          <TabPanel value="month"><span style={{ color: "var(--ds-text-secondary)" }}>Month summary placeholder.</span></TabPanel>
+          <TabPanel value="year"><span style={{ color: "var(--ds-text-secondary)" }}>Year summary placeholder.</span></TabPanel>
+        </Tabs>
+      </DemoCard>
 
-      <Table striped hoverable>
-        <TableHead>
-          <TableRow>
-            <TableHeadCell
-              sortDirection={dir("name")}
-              onClick={() => handleSort("name")}
-              style={{ cursor: "pointer", userSelect: "none" }}
-            >
-              Project
-            </TableHeadCell>
-            <TableHeadCell
-              align="right"
-              sortDirection={dir("users")}
-              onClick={() => handleSort("users")}
-              style={{ cursor: "pointer", userSelect: "none" }}
-            >
-              Users
-            </TableHeadCell>
-            <TableHeadCell
-              align="right"
-              sortDirection={dir("revenue")}
-              onClick={() => handleSort("revenue")}
-              style={{ cursor: "pointer", userSelect: "none" }}
-            >
-              Revenue
-            </TableHeadCell>
-            <TableHeadCell align="right">Actions</TableHeadCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {sorted.map((r) => (
-            <TableRow key={r.name}>
-              <TableCell>{r.name}</TableCell>
-              <TableCell align="right">{r.users.toLocaleString()}</TableCell>
-              <TableCell align="right">${r.revenue.toLocaleString()}</TableCell>
-              <TableCell align="right">
-                <Button size="sm" variant="ghost">Edit</Button>
-              </TableCell>
+      <DemoCard
+        label="Table (sortable, striped, hoverable, with foot)"
+        source={`const [sortKey, setSortKey] = useState("revenue");
+const [sortDir, setSortDir] = useState("desc");
+
+const sorted = [...rows].sort((a, b) => {
+  if (a[sortKey] === b[sortKey]) return 0;
+  const cmp = a[sortKey] < b[sortKey] ? -1 : 1;
+  return sortDir === "asc" ? cmp : -cmp;
+});
+
+const dir = (key) => (key === sortKey ? sortDir : undefined);
+
+<Table striped hoverable>
+  <TableHead>
+    <TableRow>
+      <TableHeadCell sortDirection={dir("name")}    onClick={() => handleSort("name")}>Project</TableHeadCell>
+      <TableHeadCell sortDirection={dir("users")}   onClick={() => handleSort("users")}   align="right">Users</TableHeadCell>
+      <TableHeadCell sortDirection={dir("revenue")} onClick={() => handleSort("revenue")} align="right">Revenue</TableHeadCell>
+      <TableHeadCell align="right">Actions</TableHeadCell>
+    </TableRow>
+  </TableHead>
+  <TableBody>
+    {sorted.map((r) => (
+      <TableRow key={r.name}>
+        <TableCell>{r.name}</TableCell>
+        <TableCell align="right">{r.users.toLocaleString()}</TableCell>
+        <TableCell align="right">\${r.revenue.toLocaleString()}</TableCell>
+        <TableCell align="right"><Button size="sm" variant="ghost">Edit</Button></TableCell>
+      </TableRow>
+    ))}
+  </TableBody>
+  <TableFoot>
+    <TableRow>
+      <TableCell>Total</TableCell>
+      <TableCell align="right">{totalUsers.toLocaleString()}</TableCell>
+      <TableCell align="right">\${totalRevenue.toLocaleString()}</TableCell>
+      <TableCell />
+    </TableRow>
+  </TableFoot>
+</Table>`}
+      >
+        <Table striped hoverable>
+          <TableHead>
+            <TableRow>
+              <TableHeadCell
+                sortDirection={dir("name")}
+                onClick={() => handleSort("name")}
+                style={{ cursor: "pointer", userSelect: "none" }}
+              >
+                Project
+              </TableHeadCell>
+              <TableHeadCell
+                align="right"
+                sortDirection={dir("users")}
+                onClick={() => handleSort("users")}
+                style={{ cursor: "pointer", userSelect: "none" }}
+              >
+                Users
+              </TableHeadCell>
+              <TableHeadCell
+                align="right"
+                sortDirection={dir("revenue")}
+                onClick={() => handleSort("revenue")}
+                style={{ cursor: "pointer", userSelect: "none" }}
+              >
+                Revenue
+              </TableHeadCell>
+              <TableHeadCell align="right">Actions</TableHeadCell>
             </TableRow>
-          ))}
-        </TableBody>
-        <TableFoot>
-          <TableRow>
-            <TableCell>Total</TableCell>
-            <TableCell align="right">{rows.reduce((s, r) => s + r.users, 0).toLocaleString()}</TableCell>
-            <TableCell align="right">${rows.reduce((s, r) => s + r.revenue, 0).toLocaleString()}</TableCell>
-            <TableCell />
-          </TableRow>
-        </TableFoot>
-      </Table>
+          </TableHead>
+          <TableBody>
+            {sorted.map((r) => (
+              <TableRow key={r.name}>
+                <TableCell>{r.name}</TableCell>
+                <TableCell align="right">{r.users.toLocaleString()}</TableCell>
+                <TableCell align="right">${r.revenue.toLocaleString()}</TableCell>
+                <TableCell align="right">
+                  <Button size="sm" variant="ghost">Edit</Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+          <TableFoot>
+            <TableRow>
+              <TableCell>Total</TableCell>
+              <TableCell align="right">{rows.reduce((s, r) => s + r.users, 0).toLocaleString()}</TableCell>
+              <TableCell align="right">${rows.reduce((s, r) => s + r.revenue, 0).toLocaleString()}</TableCell>
+              <TableCell />
+            </TableRow>
+          </TableFoot>
+        </Table>
+      </DemoCard>
 
-      <Pagination page={page} totalPages={20} onChange={setPage} />
+      <DemoCard
+        label="Pagination (20 pages, current 3)"
+        source={`const [page, setPage] = useState(3);
 
-      <div>
-        <p className="gallery__section-description" style={{ marginBottom: "var(--ds-space-sm)" }}>
-          Skeleton — loading placeholders. Animation respects <code>prefers-reduced-motion</code>.
-        </p>
+<Pagination
+  page={page}
+  totalPages={20}
+  onChange={setPage}
+/>`}
+      >
+        <Pagination page={page} totalPages={20} onChange={setPage} />
+      </DemoCard>
+
+      <DemoCard
+        label="Skeleton — loading placeholders (respects prefers-reduced-motion)"
+        source={`<div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+  <Skeleton shape="circle" />
+  <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+    <Skeleton shape="text" width="60%" height="1.25rem" />
+    <Skeleton shape="text" width="40%" />
+    <Skeleton shape="text" width="80%" />
+  </div>
+</div>
+<Skeleton shape="rect" height="6rem" />`}
+      >
         <div style={{ display: "flex", alignItems: "center", gap: "var(--ds-space-md)" }}>
           <Skeleton shape="circle" />
           <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "var(--ds-space-xs)" }}>
@@ -675,7 +829,7 @@ function NavigationDataSection() {
           </div>
         </div>
         <Skeleton shape="rect" height="6rem" style={{ marginTop: "var(--ds-space-md)" }} />
-      </div>
+      </DemoCard>
     </section>
   );
 }
@@ -1096,36 +1250,42 @@ function ButtonSection() {
 }
 
 function BadgeSection() {
-  const tones = ["neutral", "primary", "secondary", "success", "warning", "error", "info"] as const;
+  const tones    = ["neutral", "primary", "secondary", "success", "warning", "error", "info"] as const;
+  const variants = ["solid", "soft", "outline"] as const;
   return (
     <section className="gallery__section">
       <h2 className="gallery__section-title">Badges</h2>
       <p className="gallery__section-description">
-        Three variants × seven tones — shows the breadth of the palette and semantic colors at a glance.
+        Three variants × seven tones — every column is the same tone, every row the same variant.
       </p>
 
       <DemoCard
         label="Variants × tones"
-        source={`const tones = ["neutral", "primary", "secondary", "success", "warning", "error", "info"];
+        source={`const tones    = ["neutral", "primary", "secondary", "success", "warning", "error", "info"];
+const variants = ["solid", "soft", "outline"];
 
-{tones.map((tone) => <Badge key={tone} variant="solid"   tone={tone}>{tone}</Badge>)}
-{tones.map((tone) => <Badge key={tone} variant="soft"    tone={tone}>{tone}</Badge>)}
-{tones.map((tone) => <Badge key={tone} variant="outline" tone={tone}>{tone}</Badge>)}`}
+{variants.map((variant) =>
+  tones.map((tone) => (
+    <Badge key={\`\${variant}-\${tone}\`} variant={variant} tone={tone}>
+      {tone}
+    </Badge>
+  )),
+)}`}
       >
-        <div className="gallery__row">
+        <div className="badge-grid">
+          {/* Column headers (tone names) — rendered above the first variant row. */}
+          <span aria-hidden="true" />
           {tones.map((tone) => (
-            <Badge key={tone} variant="solid" tone={tone}>{tone}</Badge>
+            <span key={`col-${tone}`} className="badge-grid__col-label">{tone}</span>
           ))}
-        </div>
-        <div className="gallery__row">
-          {tones.map((tone) => (
-            <Badge key={tone} variant="soft" tone={tone}>{tone}</Badge>
-          ))}
-        </div>
-        <div className="gallery__row">
-          {tones.map((tone) => (
-            <Badge key={tone} variant="outline" tone={tone}>{tone}</Badge>
-          ))}
+          {/* Three variant rows. Each contributes 1 label + 7 badges, placed in
+              the same parent grid so columns align across rows. */}
+          {variants.flatMap((variant) => [
+            <span key={`label-${variant}`} className="badge-grid__row-label">{variant}</span>,
+            ...tones.map((tone) => (
+              <Badge key={`${variant}-${tone}`} variant={variant} tone={tone}>{tone}</Badge>
+            )),
+          ])}
         </div>
       </DemoCard>
     </section>
@@ -1140,46 +1300,82 @@ function CardSection() {
         Surface hierarchy, radius, and shadow at three elevations.
       </p>
 
-      <div className="gallery__grid">
-        <Card elevation="flat">
-          <CardHeader>
-            <CardTitle>Flat</CardTitle>
-            <CardDescription>No shadow — sits flush with the surface.</CardDescription>
-          </CardHeader>
-          <CardBody>
-            <p>Used for grouped content that doesn't need lift.</p>
-          </CardBody>
-          <CardFooter>
-            <Button size="sm" variant="ghost">Action</Button>
-          </CardFooter>
-        </Card>
+      <DemoCard
+        label="Three elevations"
+        source={`<Card elevation="flat">
+  <CardHeader>
+    <CardTitle>Flat</CardTitle>
+    <CardDescription>No shadow — sits flush with the surface.</CardDescription>
+  </CardHeader>
+  <CardBody><p>Used for grouped content that doesn't need lift.</p></CardBody>
+  <CardFooter>
+    <Button size="sm" variant="ghost">Action</Button>
+  </CardFooter>
+</Card>
 
-        <Card elevation="elevated">
-          <CardHeader>
-            <CardTitle>Elevated</CardTitle>
-            <CardDescription>Default card style with medium shadow.</CardDescription>
-          </CardHeader>
-          <CardBody>
-            <p>Most cards in the app use this elevation. Balanced lift and density.</p>
-          </CardBody>
-          <CardFooter>
-            <Button size="sm" variant="primary">Primary</Button>
-          </CardFooter>
-        </Card>
+<Card elevation="elevated">
+  <CardHeader>
+    <CardTitle>Elevated</CardTitle>
+    <CardDescription>Default card style with medium shadow.</CardDescription>
+  </CardHeader>
+  <CardBody><p>Most cards in the app use this elevation.</p></CardBody>
+  <CardFooter>
+    <Button size="sm" variant="primary">Primary</Button>
+  </CardFooter>
+</Card>
 
-        <Card elevation="floating" interactive>
-          <CardHeader>
-            <CardTitle>Floating (interactive)</CardTitle>
-            <CardDescription>Hover to see the shadow grow.</CardDescription>
-          </CardHeader>
-          <CardBody>
-            <p>Used for modal-like emphasis or clickable cards.</p>
-          </CardBody>
-          <CardFooter>
-            <Badge variant="solid" tone="primary">Featured</Badge>
-          </CardFooter>
-        </Card>
-      </div>
+<Card elevation="floating" interactive>
+  <CardHeader>
+    <CardTitle>Floating (interactive)</CardTitle>
+    <CardDescription>Hover to see the shadow grow.</CardDescription>
+  </CardHeader>
+  <CardBody><p>Used for modal-like emphasis or clickable cards.</p></CardBody>
+  <CardFooter>
+    <Badge variant="solid" tone="primary">Featured</Badge>
+  </CardFooter>
+</Card>`}
+      >
+        <div className="gallery__grid">
+          <Card elevation="flat">
+            <CardHeader>
+              <CardTitle>Flat</CardTitle>
+              <CardDescription>No shadow — sits flush with the surface.</CardDescription>
+            </CardHeader>
+            <CardBody>
+              <p>Used for grouped content that doesn't need lift.</p>
+            </CardBody>
+            <CardFooter>
+              <Button size="sm" variant="ghost">Action</Button>
+            </CardFooter>
+          </Card>
+
+          <Card elevation="elevated">
+            <CardHeader>
+              <CardTitle>Elevated</CardTitle>
+              <CardDescription>Default card style with medium shadow.</CardDescription>
+            </CardHeader>
+            <CardBody>
+              <p>Most cards in the app use this elevation. Balanced lift and density.</p>
+            </CardBody>
+            <CardFooter>
+              <Button size="sm" variant="primary">Primary</Button>
+            </CardFooter>
+          </Card>
+
+          <Card elevation="floating" interactive>
+            <CardHeader>
+              <CardTitle>Floating (interactive)</CardTitle>
+              <CardDescription>Hover to see the shadow grow.</CardDescription>
+            </CardHeader>
+            <CardBody>
+              <p>Used for modal-like emphasis or clickable cards.</p>
+            </CardBody>
+            <CardFooter>
+              <Badge variant="solid" tone="primary">Featured</Badge>
+            </CardFooter>
+          </Card>
+        </div>
+      </DemoCard>
     </section>
   );
 }
@@ -1196,33 +1392,57 @@ function FormSection() {
         Input surface, border, focus, hint, and error states.
       </p>
 
-      <div className="gallery__form">
-        <Input
-          label="Full name"
-          placeholder="Ada Lovelace"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          hint="As shown on your account"
-        />
-        <Input
-          label="Email"
-          type="email"
-          placeholder="you@example.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          error={showError ? "Must include an @ sign" : undefined}
-        />
-        <Input
-          label="Disabled field"
-          value="locked"
-          disabled
-          hint="Cannot be edited"
-        />
-        <div className="gallery__row">
-          <Button variant="primary">Submit</Button>
-          <Button variant="ghost">Cancel</Button>
+      <DemoCard
+        label="Inputs with validation"
+        source={`const [name, setName]   = useState("");
+const [email, setEmail] = useState("");
+const showError = email.length > 0 && !email.includes("@");
+
+<Input
+  label="Full name"
+  placeholder="Ada Lovelace"
+  value={name}
+  onChange={(e) => setName(e.target.value)}
+  hint="As shown on your account"
+/>
+<Input
+  label="Email"
+  type="email"
+  placeholder="you@example.com"
+  value={email}
+  onChange={(e) => setEmail(e.target.value)}
+  error={showError ? "Must include an @ sign" : undefined}
+/>
+<Input label="Disabled field" value="locked" disabled hint="Cannot be edited" />`}
+      >
+        <div className="gallery__form">
+          <Input
+            label="Full name"
+            placeholder="Ada Lovelace"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            hint="As shown on your account"
+          />
+          <Input
+            label="Email"
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            error={showError ? "Must include an @ sign" : undefined}
+          />
+          <Input
+            label="Disabled field"
+            value="locked"
+            disabled
+            hint="Cannot be edited"
+          />
+          <div className="gallery__row">
+            <Button variant="primary">Submit</Button>
+            <Button variant="ghost">Cancel</Button>
+          </div>
         </div>
-      </div>
+      </DemoCard>
     </section>
   );
 }
@@ -1235,37 +1455,70 @@ function SemanticSection() {
         How the same Card composes with badge tones to communicate status.
       </p>
 
-      <div className="gallery__grid">
-        <Card>
-          <CardHeader>
-            <div className="gallery__row" style={{ justifyContent: "space-between", width: "100%" }}>
-              <CardTitle as="h4">Deploy succeeded</CardTitle>
-              <Badge variant="solid" tone="success">live</Badge>
-            </div>
-            <CardDescription>Version 2.1.4 is now serving 100% of traffic.</CardDescription>
-          </CardHeader>
-        </Card>
+      <DemoCard
+        label="Status cards via Card + Badge composition"
+        source={`<Card>
+  <CardHeader>
+    <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+      <CardTitle as="h4">Deploy succeeded</CardTitle>
+      <Badge variant="solid" tone="success">live</Badge>
+    </div>
+    <CardDescription>Version 2.1.4 is now serving 100% of traffic.</CardDescription>
+  </CardHeader>
+</Card>
 
-        <Card>
-          <CardHeader>
-            <div className="gallery__row" style={{ justifyContent: "space-between", width: "100%" }}>
-              <CardTitle as="h4">Quota approaching limit</CardTitle>
-              <Badge variant="solid" tone="warning">82%</Badge>
-            </div>
-            <CardDescription>You have used 8,200 of your 10,000 monthly requests.</CardDescription>
-          </CardHeader>
-        </Card>
+<Card>
+  <CardHeader>
+    <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+      <CardTitle as="h4">Quota approaching limit</CardTitle>
+      <Badge variant="solid" tone="warning">82%</Badge>
+    </div>
+    <CardDescription>You have used 8,200 of your 10,000 monthly requests.</CardDescription>
+  </CardHeader>
+</Card>
 
-        <Card>
-          <CardHeader>
-            <div className="gallery__row" style={{ justifyContent: "space-between", width: "100%" }}>
-              <CardTitle as="h4">Payment failed</CardTitle>
-              <Badge variant="solid" tone="error">action required</Badge>
-            </div>
-            <CardDescription>Your card was declined. Update billing to continue service.</CardDescription>
-          </CardHeader>
-        </Card>
-      </div>
+<Card>
+  <CardHeader>
+    <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+      <CardTitle as="h4">Payment failed</CardTitle>
+      <Badge variant="solid" tone="error">action required</Badge>
+    </div>
+    <CardDescription>Your card was declined. Update billing to continue service.</CardDescription>
+  </CardHeader>
+</Card>`}
+      >
+        <div className="gallery__grid">
+          <Card>
+            <CardHeader>
+              <div className="gallery__row" style={{ justifyContent: "space-between", width: "100%" }}>
+                <CardTitle as="h4">Deploy succeeded</CardTitle>
+                <Badge variant="solid" tone="success">live</Badge>
+              </div>
+              <CardDescription>Version 2.1.4 is now serving 100% of traffic.</CardDescription>
+            </CardHeader>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <div className="gallery__row" style={{ justifyContent: "space-between", width: "100%" }}>
+                <CardTitle as="h4">Quota approaching limit</CardTitle>
+                <Badge variant="solid" tone="warning">82%</Badge>
+              </div>
+              <CardDescription>You have used 8,200 of your 10,000 monthly requests.</CardDescription>
+            </CardHeader>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <div className="gallery__row" style={{ justifyContent: "space-between", width: "100%" }}>
+                <CardTitle as="h4">Payment failed</CardTitle>
+                <Badge variant="solid" tone="error">action required</Badge>
+              </div>
+              <CardDescription>Your card was declined. Update billing to continue service.</CardDescription>
+            </CardHeader>
+          </Card>
+        </div>
+      </DemoCard>
     </section>
   );
 }

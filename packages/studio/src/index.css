@@ -1235,17 +1235,20 @@ img, svg { display: block; }
   color: var(--ds-text-primary);
 }
 
-.demo-card__summary-icon {
-  font-family: var(--ds-font-mono);
-  font-weight: var(--ds-weight-bold);
-  font-size: var(--ds-text-xs-size);
+.demo-card__icon {
+  flex-shrink: 0;
   color: var(--ds-color-primary-500);
-  transition: transform var(--ds-duration-fast) var(--ds-easing-standard);
+  transition: transform var(--ds-duration-fast) var(--ds-easing-standard),
+              color     var(--ds-duration-fast) var(--ds-easing-standard);
 }
 
-.demo-card__disclosure[open] .demo-card__summary-icon {
-  /* Subtle rotation to mark open state. */
-  transform: rotate(90deg);
+.demo-card__summary:hover .demo-card__icon {
+  color: var(--ds-color-primary-700);
+}
+
+.demo-card__disclosure[open] .demo-card__icon {
+  /* Flip the chevrons inward when open — "collapse" feel. */
+  transform: scaleX(0.65);
 }
 
 /* Swap "Show code" -> "Hide code" when expanded. */
@@ -1265,6 +1268,22 @@ img, svg { display: block; }
   border-radius: var(--ds-radius-md);
   overflow: hidden;
   background: var(--ds-surface-overlay);
+}
+
+/* Top bar — language badge + copy button — sits over the code area. */
+.demo-card__lang {
+  position: absolute;
+  top: var(--ds-space-xs);
+  left: var(--ds-space-sm);
+  z-index: 1;
+  font-family: var(--ds-font-mono);
+  font-size: 10px;
+  font-weight: var(--ds-weight-bold);
+  letter-spacing: 0.08em;
+  color: var(--ds-color-primary-700);
+  background: var(--ds-color-primary-50);
+  padding: 2px 6px;
+  border-radius: var(--ds-radius-sm);
 }
 
 .demo-card__copy {
@@ -1293,16 +1312,16 @@ img, svg { display: block; }
 
 .demo-card__code {
   margin: 0;
-  padding: var(--ds-space-md);
-  padding-top: calc(var(--ds-space-md) + 1.5rem); /* room for copy button */
+  padding: calc(var(--ds-space-md) + 1.25rem) var(--ds-space-md) var(--ds-space-md); /* top: room for lang + copy */
   font-family: var(--ds-font-mono);
   font-size: var(--ds-text-xs-size);
-  line-height: var(--ds-line-height-base);
+  line-height: 1.55;
   color: var(--ds-text-primary);
-  white-space: pre;
   overflow-x: auto;
   max-height: 32rem;
   overflow-y: auto;
+  /* Reset the line counter so each new code block restarts at 1. */
+  counter-reset: demo-line;
 }
 
 .demo-card__code code {
@@ -1311,4 +1330,78 @@ img, svg { display: block; }
   background: transparent;
   padding: 0;
   color: inherit;
+  display: block;
+}
+
+/* Each line is a block; the line number comes from a CSS counter. The width
+   of the gutter is fixed via `ch` so multi-digit numbers don't shift content. */
+.demo-card__line {
+  display: block;
+  white-space: pre;
+  counter-increment: demo-line;
+}
+
+.demo-card__line::before {
+  content: counter(demo-line);
+  display: inline-block;
+  width: 2.5ch;
+  margin-right: var(--ds-space-md);
+  text-align: right;
+  color: var(--ds-text-muted);
+  user-select: none; /* line numbers don't go in the copy when selecting text */
+  -webkit-user-select: none;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.6;
+}
+
+/* --------- Badge grid demo --------- */
+
+/* True 2-D grid: variants as rows, tones as columns. Columns auto-size to fit
+   the widest badge in that column, so labels stay readable while the grid
+   stays aligned across rows. Overflows horizontally on narrow viewports
+   (`overflow-x: auto`) rather than wrapping, which would break alignment. */
+.badge-grid {
+  display: grid;
+  grid-template-columns: max-content repeat(7, max-content);
+  column-gap: var(--ds-space-sm);
+  row-gap: var(--ds-space-sm);
+  align-items: center;
+  padding: var(--ds-space-md);
+  background: var(--ds-surface-overlay);
+  border: var(--ds-border-thin) solid var(--ds-color-neutral-200);
+  border-radius: var(--ds-radius-md);
+  overflow-x: auto;
+}
+
+.badge-grid__col-label,
+.badge-grid__row-label {
+  font-family: var(--ds-font-body);
+  font-size: var(--ds-text-xs-size);
+  font-weight: var(--ds-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ds-text-muted);
+  white-space: nowrap;
+}
+
+.badge-grid__col-label {
+  text-align: center;
+  padding-bottom: var(--ds-space-xs);
+  border-bottom: var(--ds-border-thin) solid var(--ds-color-neutral-200);
+}
+
+.badge-grid__row-label {
+  text-align: right;
+  padding-right: var(--ds-space-sm);
+  border-right: var(--ds-border-thin) solid var(--ds-color-neutral-200);
+  margin-right: var(--ds-space-xs);
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+}
+
+/* All Badge children of badge-grid get centered in their cell so columns look
+   tidy even when the badge content varies in width. */
+.badge-grid > .ds-badge {
+  justify-self: center;
 }

@@ -11,6 +11,8 @@ interface DemoCardProps {
   source: string;
   /** Optional label above the preview, e.g. "Variants" or "Sizes". */
   label?: string;
+  /** Override the language badge text. Defaults to "TSX". */
+  language?: string;
 }
 
 /**
@@ -18,7 +20,12 @@ interface DemoCardProps {
  * open/close affordance is keyboard-accessible and screen-reader-readable
  * without any extra ARIA wiring.
  */
-export function DemoCard({ children, source, label }: DemoCardProps) {
+export function DemoCard({
+  children,
+  source,
+  label,
+  language = "TSX",
+}: DemoCardProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -31,16 +38,19 @@ export function DemoCard({ children, source, label }: DemoCardProps) {
     }
   };
 
+  const lines = source.split("\n");
+
   return (
     <div className="demo-card">
       {label && <div className="demo-card__label">{label}</div>}
       <div className="demo-card__preview">{children}</div>
       <details className="demo-card__disclosure">
         <summary className="demo-card__summary">
-          <span className="demo-card__summary-icon" aria-hidden="true">‹/›</span>
+          <CodeIcon />
           <span className="demo-card__summary-text">Show code</span>
         </summary>
         <div className="demo-card__code-wrap">
+          <span className="demo-card__lang" aria-hidden="true">{language}</span>
           <button
             type="button"
             className="demo-card__copy"
@@ -50,10 +60,36 @@ export function DemoCard({ children, source, label }: DemoCardProps) {
             {copied ? "Copied!" : "Copy"}
           </button>
           <pre className="demo-card__code" aria-label="Source code">
-            <code data-language="tsx">{source}</code>
+            <code data-language="tsx">
+              {lines.map((line, i) => (
+                <span key={i} className="demo-card__line">{line === "" ? " " : line}</span>
+              ))}
+            </code>
           </pre>
         </div>
       </details>
     </div>
+  );
+}
+
+function CodeIcon() {
+  // Two angle-bracket strokes forming </>. 14×14 viewBox, uses currentColor so
+  // it tints with the summary's text color (which we toggle on hover).
+  return (
+    <svg
+      className="demo-card__icon"
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M8 6 L2 12 L8 18" />
+      <path d="M16 6 L22 12 L16 18" />
+    </svg>
   );
 }
