@@ -46,6 +46,7 @@ import {
 } from "@nicksaulnier/design-system-components";
 import type { BrandTheme, ColorScale } from "@nicksaulnier/design-system-tokens";
 import { ExportPanel } from "./ExportPanel.js";
+import { DemoCard } from "./DemoCard.js";
 
 const COLOR_STOPS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950] as const;
 
@@ -224,33 +225,62 @@ function ComposedScenarioSection() {
         A small composed scene — Card, Input, Toggle, and Buttons working together as a real UI fragment.
         Useful for sanity-checking how the theme reads when components compose, not just in isolation.
       </p>
-      <div style={{ maxWidth: "32rem" }}>
-        <Card elevation="elevated">
-          <CardHeader>
-            <CardTitle>Update profile</CardTitle>
-            <CardDescription>Your changes will apply across all signed-in devices.</CardDescription>
-          </CardHeader>
-          <CardBody>
-            <div style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-md)" }}>
-              <Input
-                label="Display name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                hint="Shown on comments, mentions, and your public profile."
-              />
-              <Toggle
-                checked={emails}
-                onChange={setEmails}
-                label="Send me product update emails"
-              />
-            </div>
-          </CardBody>
-          <CardFooter>
-            <Button variant="ghost">Cancel</Button>
-            <Button variant="primary">Save changes</Button>
-          </CardFooter>
-        </Card>
-      </div>
+      <DemoCard
+        source={`const [name, setName]     = useState("Ada Lovelace");
+const [emails, setEmails] = useState(true);
+
+<Card elevation="elevated">
+  <CardHeader>
+    <CardTitle>Update profile</CardTitle>
+    <CardDescription>Your changes will apply across all signed-in devices.</CardDescription>
+  </CardHeader>
+  <CardBody>
+    <Input
+      label="Display name"
+      value={name}
+      onChange={(e) => setName(e.target.value)}
+      hint="Shown on comments, mentions, and your public profile."
+    />
+    <Toggle
+      checked={emails}
+      onChange={setEmails}
+      label="Send me product update emails"
+    />
+  </CardBody>
+  <CardFooter>
+    <Button variant="ghost">Cancel</Button>
+    <Button variant="primary">Save changes</Button>
+  </CardFooter>
+</Card>`}
+      >
+        <div style={{ maxWidth: "32rem" }}>
+          <Card elevation="elevated">
+            <CardHeader>
+              <CardTitle>Update profile</CardTitle>
+              <CardDescription>Your changes will apply across all signed-in devices.</CardDescription>
+            </CardHeader>
+            <CardBody>
+              <div style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-md)" }}>
+                <Input
+                  label="Display name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  hint="Shown on comments, mentions, and your public profile."
+                />
+                <Toggle
+                  checked={emails}
+                  onChange={setEmails}
+                  label="Send me product update emails"
+                />
+              </div>
+            </CardBody>
+            <CardFooter>
+              <Button variant="ghost">Cancel</Button>
+              <Button variant="primary">Save changes</Button>
+            </CardFooter>
+          </Card>
+        </div>
+      </DemoCard>
     </section>
   );
 }
@@ -529,26 +559,42 @@ function NavigationDataSection() {
         <BreadcrumbItem current>Q3 Summary</BreadcrumbItem>
       </Breadcrumb>
 
-      <Tabs defaultValue="overview">
-        <TabList ariaLabel="Project sections">
-          <Tab value="overview">Overview</Tab>
-          <Tab value="activity">Activity</Tab>
-          <Tab value="settings">Settings</Tab>
-          <Tab value="billing">Billing</Tab>
-        </TabList>
-        <TabPanel value="overview">
-          <p>The Overview tab shows the high-level metrics for this project. Tabs use the underline variant by default and auto-activate on focus per WAI-ARIA Authoring Practices.</p>
-        </TabPanel>
-        <TabPanel value="activity">
-          <p>Activity feed would appear here — recent commits, comments, and deploys.</p>
-        </TabPanel>
-        <TabPanel value="settings">
-          <p>Project settings: name, visibility, access roles.</p>
-        </TabPanel>
-        <TabPanel value="billing">
-          <p>Plan details and invoices. Click between tabs with the mouse, or use ArrowLeft / ArrowRight to navigate.</p>
-        </TabPanel>
-      </Tabs>
+      <DemoCard
+        label="Tabs (underline variant)"
+        source={`<Tabs defaultValue="overview">
+  <TabList ariaLabel="Project sections">
+    <Tab value="overview">Overview</Tab>
+    <Tab value="activity">Activity</Tab>
+    <Tab value="settings">Settings</Tab>
+    <Tab value="billing">Billing</Tab>
+  </TabList>
+  <TabPanel value="overview"><p>Overview content…</p></TabPanel>
+  <TabPanel value="activity"><p>Activity feed…</p></TabPanel>
+  <TabPanel value="settings"><p>Project settings…</p></TabPanel>
+  <TabPanel value="billing"><p>Plan details and invoices.</p></TabPanel>
+</Tabs>`}
+      >
+        <Tabs defaultValue="overview">
+          <TabList ariaLabel="Project sections">
+            <Tab value="overview">Overview</Tab>
+            <Tab value="activity">Activity</Tab>
+            <Tab value="settings">Settings</Tab>
+            <Tab value="billing">Billing</Tab>
+          </TabList>
+          <TabPanel value="overview">
+            <p>The Overview tab shows the high-level metrics for this project. Tabs use the underline variant by default and auto-activate on focus per WAI-ARIA Authoring Practices.</p>
+          </TabPanel>
+          <TabPanel value="activity">
+            <p>Activity feed would appear here — recent commits, comments, and deploys.</p>
+          </TabPanel>
+          <TabPanel value="settings">
+            <p>Project settings: name, visibility, access roles.</p>
+          </TabPanel>
+          <TabPanel value="billing">
+            <p>Plan details and invoices. Click between tabs with the mouse, or use ArrowLeft / ArrowRight to navigate.</p>
+          </TabPanel>
+        </Tabs>
+      </DemoCard>
 
       <Tabs defaultValue="day" variant="pill">
         <TabList ariaLabel="Time range">
@@ -645,37 +691,95 @@ function OverlaySection() {
         Modal, Tooltip, and Menu — portal-rendered overlays driven by the same tokens.
       </p>
 
-      <div className="gallery__row">
-        <Button variant="primary" onClick={() => setModalOpen(true)}>
-          Open modal
-        </Button>
+      <DemoCard
+        label="Modal"
+        source={`const [open, setOpen] = useState(false);
 
-        <Tooltip content="Tooltips show on hover or focus" placement="top">
-          <Button variant="secondary">Hover me (top)</Button>
-        </Tooltip>
+<Button variant="primary" onClick={() => setOpen(true)}>
+  Open modal
+</Button>
 
-        <Tooltip content="Right-side placement" placement="right">
-          <Button variant="ghost">Hover me (right)</Button>
-        </Tooltip>
+<Modal open={open} onClose={() => setOpen(false)} ariaLabel="Demo modal">
+  <ModalHeader>
+    <div>
+      <ModalTitle>Confirm changes</ModalTitle>
+      <ModalDescription>
+        This action will apply your edits to the live theme.
+      </ModalDescription>
+    </div>
+    <ModalCloseButton onClick={() => setOpen(false)} />
+  </ModalHeader>
+  <ModalBody>
+    <p>Modals trap focus, dismiss on Esc, and lock body scroll while open.</p>
+  </ModalBody>
+  <ModalFooter>
+    <Button variant="ghost"   onClick={() => setOpen(false)}>Cancel</Button>
+    <Button variant="primary" onClick={() => setOpen(false)}>Apply</Button>
+  </ModalFooter>
+</Modal>`}
+      >
+        <div className="gallery__row">
+          <Button variant="primary" onClick={() => setModalOpen(true)}>
+            Open modal
+          </Button>
+        </div>
+      </DemoCard>
 
-        <Menu>
-          <MenuTrigger>Actions ▾</MenuTrigger>
-          <MenuContent>
-            <MenuItem onSelect={() => setLastChoice("Rename")}>Rename</MenuItem>
-            <MenuItem onSelect={() => setLastChoice("Duplicate")}>Duplicate</MenuItem>
-            <MenuItem onSelect={() => setLastChoice("Archive")}>Archive</MenuItem>
-            <MenuSeparator />
-            <MenuItem onSelect={() => setLastChoice("Delete")}>Delete</MenuItem>
-            <MenuItem disabled>Disabled item</MenuItem>
-          </MenuContent>
-        </Menu>
+      <DemoCard
+        label="Tooltip"
+        source={`<Tooltip content="Tooltips show on hover or focus" placement="top">
+  <Button variant="secondary">Hover me (top)</Button>
+</Tooltip>
 
-        {lastChoice && (
-          <Badge variant="soft" tone="primary">
-            Last menu choice: {lastChoice}
-          </Badge>
-        )}
-      </div>
+<Tooltip content="Right-side placement" placement="right">
+  <Button variant="ghost">Hover me (right)</Button>
+</Tooltip>`}
+      >
+        <div className="gallery__row">
+          <Tooltip content="Tooltips show on hover or focus" placement="top">
+            <Button variant="secondary">Hover me (top)</Button>
+          </Tooltip>
+          <Tooltip content="Right-side placement" placement="right">
+            <Button variant="ghost">Hover me (right)</Button>
+          </Tooltip>
+        </div>
+      </DemoCard>
+
+      <DemoCard
+        label="Menu"
+        source={`const [lastChoice, setLastChoice] = useState(null);
+
+<Menu>
+  <MenuTrigger>Actions ▾</MenuTrigger>
+  <MenuContent>
+    <MenuItem onSelect={() => setLastChoice("Rename")}>Rename</MenuItem>
+    <MenuItem onSelect={() => setLastChoice("Duplicate")}>Duplicate</MenuItem>
+    <MenuItem onSelect={() => setLastChoice("Archive")}>Archive</MenuItem>
+    <MenuSeparator />
+    <MenuItem onSelect={() => setLastChoice("Delete")}>Delete</MenuItem>
+    <MenuItem disabled>Disabled item</MenuItem>
+  </MenuContent>
+</Menu>`}
+      >
+        <div className="gallery__row">
+          <Menu>
+            <MenuTrigger>Actions ▾</MenuTrigger>
+            <MenuContent>
+              <MenuItem onSelect={() => setLastChoice("Rename")}>Rename</MenuItem>
+              <MenuItem onSelect={() => setLastChoice("Duplicate")}>Duplicate</MenuItem>
+              <MenuItem onSelect={() => setLastChoice("Archive")}>Archive</MenuItem>
+              <MenuSeparator />
+              <MenuItem onSelect={() => setLastChoice("Delete")}>Delete</MenuItem>
+              <MenuItem disabled>Disabled item</MenuItem>
+            </MenuContent>
+          </Menu>
+          {lastChoice && (
+            <Badge variant="soft" tone="primary">
+              Last menu choice: {lastChoice}
+            </Badge>
+          )}
+        </div>
+      </DemoCard>
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} ariaLabel="Demo modal">
         <ModalHeader>
@@ -769,28 +873,43 @@ function AlertSection() {
         Four tones — each tints background + border via the matching semantic color.
       </p>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-sm)" }}>
-        {tones.map(({ tone, title, body }) =>
-          dismissed[tone] ? null : (
-            <Alert
-              key={tone}
-              tone={tone}
-              title={title}
-              icon={tone === "success" ? "✓" : tone === "warning" ? "⚠" : tone === "error" ? "✕" : "ⓘ"}
-              onDismiss={() => setDismissed((d) => ({ ...d, [tone]: true }))}
-            >
-              {body}
-            </Alert>
-          ),
-        )}
-        {Object.keys(dismissed).length > 0 && (
-          <div>
-            <Button size="sm" variant="ghost" onClick={() => setDismissed({})}>
-              Restore dismissed
-            </Button>
-          </div>
-        )}
-      </div>
+      <DemoCard
+        source={`const [dismissed, setDismissed] = useState({});
+
+<Alert
+  tone="info"
+  title="Heads up"
+  icon="ⓘ"
+  onDismiss={() => setDismissed((d) => ({ ...d, info: true }))}
+>
+  A new version of the dashboard is available.
+</Alert>
+
+{/* ...same shape for success / warning / error tones */}`}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-sm)" }}>
+          {tones.map(({ tone, title, body }) =>
+            dismissed[tone] ? null : (
+              <Alert
+                key={tone}
+                tone={tone}
+                title={title}
+                icon={tone === "success" ? "✓" : tone === "warning" ? "⚠" : tone === "error" ? "✕" : "ⓘ"}
+                onDismiss={() => setDismissed((d) => ({ ...d, [tone]: true }))}
+              >
+                {body}
+              </Alert>
+            ),
+          )}
+          {Object.keys(dismissed).length > 0 && (
+            <div>
+              <Button size="sm" variant="ghost" onClick={() => setDismissed({})}>
+                Restore dismissed
+              </Button>
+            </div>
+          )}
+        </div>
+      </DemoCard>
     </section>
   );
 }
@@ -803,19 +922,35 @@ function AvatarSection() {
         Four sizes; circle or square; falls back to initials when no image source is provided.
       </p>
 
-      <div className="gallery__row">
-        <Avatar size="sm" name="Ada Lovelace" />
-        <Avatar size="md" name="Marie Curie" />
-        <Avatar size="lg" name="Katherine Johnson" />
-        <Avatar size="xl" name="Grace Hopper" />
-      </div>
+      <DemoCard
+        label="Sizes (circle)"
+        source={`<Avatar size="sm" name="Ada Lovelace" />
+<Avatar size="md" name="Marie Curie" />
+<Avatar size="lg" name="Katherine Johnson" />
+<Avatar size="xl" name="Grace Hopper" />`}
+      >
+        <div className="gallery__row">
+          <Avatar size="sm" name="Ada Lovelace" />
+          <Avatar size="md" name="Marie Curie" />
+          <Avatar size="lg" name="Katherine Johnson" />
+          <Avatar size="xl" name="Grace Hopper" />
+        </div>
+      </DemoCard>
 
-      <div className="gallery__row">
-        <Avatar size="md" name="Ada Lovelace" shape="square" />
-        <Avatar size="md" name="Marie Curie"  shape="square" />
-        <Avatar size="md" name="Katherine Johnson" shape="square" />
-        <Avatar size="md" name="Grace Hopper" shape="square" />
-      </div>
+      <DemoCard
+        label="Square shape"
+        source={`<Avatar size="md" shape="square" name="Ada Lovelace" />
+<Avatar size="md" shape="square" name="Marie Curie" />
+<Avatar size="md" shape="square" name="Katherine Johnson" />
+<Avatar size="md" shape="square" name="Grace Hopper" />`}
+      >
+        <div className="gallery__row">
+          <Avatar size="md" name="Ada Lovelace" shape="square" />
+          <Avatar size="md" name="Marie Curie"  shape="square" />
+          <Avatar size="md" name="Katherine Johnson" shape="square" />
+          <Avatar size="md" name="Grace Hopper" shape="square" />
+        </div>
+      </DemoCard>
     </section>
   );
 }
@@ -831,25 +966,49 @@ function ToggleSection() {
         Switch component — exercises the primary color and motion tokens.
       </p>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-md)" }}>
-        <Toggle
-          checked={notifications}
-          onChange={setNotifications}
-          label="Email notifications"
-        />
-        <Toggle
-          checked={marketing}
-          onChange={setMarketing}
-          label="Marketing updates"
-        />
-        <Toggle
-          checked={analytics}
-          onChange={setAnalytics}
-          label="Anonymous analytics"
-          size="sm"
-        />
-        <Toggle checked={true} onChange={() => {}} label="Locked on" disabled />
-      </div>
+      <DemoCard
+        source={`const [notifications, setNotifications] = useState(true);
+const [marketing,     setMarketing]     = useState(false);
+const [analytics,     setAnalytics]     = useState(true);
+
+<Toggle
+  checked={notifications}
+  onChange={setNotifications}
+  label="Email notifications"
+/>
+<Toggle
+  checked={marketing}
+  onChange={setMarketing}
+  label="Marketing updates"
+/>
+<Toggle
+  checked={analytics}
+  onChange={setAnalytics}
+  label="Anonymous analytics"
+  size="sm"
+/>
+<Toggle checked={true} onChange={() => {}} label="Locked on" disabled />`}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: "var(--ds-space-md)" }}>
+          <Toggle
+            checked={notifications}
+            onChange={setNotifications}
+            label="Email notifications"
+          />
+          <Toggle
+            checked={marketing}
+            onChange={setMarketing}
+            label="Marketing updates"
+          />
+          <Toggle
+            checked={analytics}
+            onChange={setAnalytics}
+            label="Anonymous analytics"
+            size="sm"
+          />
+          <Toggle checked={true} onChange={() => {}} label="Locked on" disabled />
+        </div>
+      </DemoCard>
     </section>
   );
 }
@@ -903,19 +1062,35 @@ function ButtonSection() {
         Four variants, three sizes. Exercise the primary color, radius, shadow, and motion tokens.
       </p>
 
-      <div className="gallery__row">
-        <Button variant="primary">Primary</Button>
-        <Button variant="secondary">Secondary</Button>
-        <Button variant="ghost">Ghost</Button>
-        <Button variant="destructive">Destructive</Button>
-        <Button variant="primary" disabled>Disabled</Button>
-      </div>
+      <DemoCard
+        label="Variants"
+        source={`<Button variant="primary">Primary</Button>
+<Button variant="secondary">Secondary</Button>
+<Button variant="ghost">Ghost</Button>
+<Button variant="destructive">Destructive</Button>
+<Button variant="primary" disabled>Disabled</Button>`}
+      >
+        <div className="gallery__row">
+          <Button variant="primary">Primary</Button>
+          <Button variant="secondary">Secondary</Button>
+          <Button variant="ghost">Ghost</Button>
+          <Button variant="destructive">Destructive</Button>
+          <Button variant="primary" disabled>Disabled</Button>
+        </div>
+      </DemoCard>
 
-      <div className="gallery__row">
-        <Button size="sm">Small</Button>
-        <Button size="md">Medium</Button>
-        <Button size="lg">Large</Button>
-      </div>
+      <DemoCard
+        label="Sizes"
+        source={`<Button size="sm">Small</Button>
+<Button size="md">Medium</Button>
+<Button size="lg">Large</Button>`}
+      >
+        <div className="gallery__row">
+          <Button size="sm">Small</Button>
+          <Button size="md">Medium</Button>
+          <Button size="lg">Large</Button>
+        </div>
+      </DemoCard>
     </section>
   );
 }
@@ -929,21 +1104,30 @@ function BadgeSection() {
         Three variants × seven tones — shows the breadth of the palette and semantic colors at a glance.
       </p>
 
-      <div className="gallery__row">
-        {tones.map((tone) => (
-          <Badge key={tone} variant="solid" tone={tone}>{tone}</Badge>
-        ))}
-      </div>
-      <div className="gallery__row">
-        {tones.map((tone) => (
-          <Badge key={tone} variant="soft" tone={tone}>{tone}</Badge>
-        ))}
-      </div>
-      <div className="gallery__row">
-        {tones.map((tone) => (
-          <Badge key={tone} variant="outline" tone={tone}>{tone}</Badge>
-        ))}
-      </div>
+      <DemoCard
+        label="Variants × tones"
+        source={`const tones = ["neutral", "primary", "secondary", "success", "warning", "error", "info"];
+
+{tones.map((tone) => <Badge key={tone} variant="solid"   tone={tone}>{tone}</Badge>)}
+{tones.map((tone) => <Badge key={tone} variant="soft"    tone={tone}>{tone}</Badge>)}
+{tones.map((tone) => <Badge key={tone} variant="outline" tone={tone}>{tone}</Badge>)}`}
+      >
+        <div className="gallery__row">
+          {tones.map((tone) => (
+            <Badge key={tone} variant="solid" tone={tone}>{tone}</Badge>
+          ))}
+        </div>
+        <div className="gallery__row">
+          {tones.map((tone) => (
+            <Badge key={tone} variant="soft" tone={tone}>{tone}</Badge>
+          ))}
+        </div>
+        <div className="gallery__row">
+          {tones.map((tone) => (
+            <Badge key={tone} variant="outline" tone={tone}>{tone}</Badge>
+          ))}
+        </div>
+      </DemoCard>
     </section>
   );
 }

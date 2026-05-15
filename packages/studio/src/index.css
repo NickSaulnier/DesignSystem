@@ -1181,3 +1181,134 @@ img, svg { display: block; }
   color: var(--ds-text-primary);
   font-size: var(--ds-text-sm-size);
 }
+
+/* --------- DemoCard --------- */
+
+.demo-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-sm);
+}
+
+.demo-card__label {
+  font-size: var(--ds-text-xs-size);
+  font-weight: var(--ds-weight-medium);
+  color: var(--ds-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.demo-card__preview {
+  /* Preview is just a layout slot — no surface treatment by default so demos
+     keep blending into the surrounding section. Authors can add their own
+     wrapper if they want lift. */
+  padding: 0;
+}
+
+.demo-card__disclosure {
+  margin-top: var(--ds-space-xs);
+}
+
+.demo-card__summary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-xs);
+  font-family: var(--ds-font-body);
+  font-size: var(--ds-text-xs-size);
+  font-weight: var(--ds-weight-medium);
+  color: var(--ds-text-muted);
+  cursor: pointer;
+  padding: var(--ds-space-xs) var(--ds-space-sm);
+  border-radius: var(--ds-radius-sm);
+  user-select: none;
+  list-style: none;
+  transition: background var(--ds-duration-fast) var(--ds-easing-standard),
+              color var(--ds-duration-fast) var(--ds-easing-standard);
+}
+
+/* Hide the default disclosure marker — we render our own icon. */
+.demo-card__summary::-webkit-details-marker { display: none; }
+.demo-card__summary::marker                 { display: none; }
+
+.demo-card__summary:hover {
+  background: var(--ds-surface-overlay);
+  color: var(--ds-text-primary);
+}
+
+.demo-card__summary-icon {
+  font-family: var(--ds-font-mono);
+  font-weight: var(--ds-weight-bold);
+  font-size: var(--ds-text-xs-size);
+  color: var(--ds-color-primary-500);
+  transition: transform var(--ds-duration-fast) var(--ds-easing-standard);
+}
+
+.demo-card__disclosure[open] .demo-card__summary-icon {
+  /* Subtle rotation to mark open state. */
+  transform: rotate(90deg);
+}
+
+/* Swap "Show code" -> "Hide code" when expanded. */
+.demo-card__disclosure[open] .demo-card__summary-text {
+  display: none;
+}
+.demo-card__disclosure[open] .demo-card__summary::after {
+  content: "Hide code";
+  font: inherit;
+  color: inherit;
+}
+
+.demo-card__code-wrap {
+  position: relative;
+  margin-top: var(--ds-space-xs);
+  border: var(--ds-border-thin) solid var(--ds-color-neutral-200);
+  border-radius: var(--ds-radius-md);
+  overflow: hidden;
+  background: var(--ds-surface-overlay);
+}
+
+.demo-card__copy {
+  position: absolute;
+  top: var(--ds-space-xs);
+  right: var(--ds-space-xs);
+  z-index: 1;
+  font-family: var(--ds-font-body);
+  font-size: var(--ds-text-xs-size);
+  font-weight: var(--ds-weight-medium);
+  color: var(--ds-text-secondary);
+  background: var(--ds-surface-raised);
+  border: var(--ds-border-thin) solid var(--ds-color-neutral-300);
+  border-radius: var(--ds-radius-sm);
+  padding: 2px var(--ds-space-sm);
+  cursor: pointer;
+  transition: background var(--ds-duration-fast) var(--ds-easing-standard),
+              color var(--ds-duration-fast) var(--ds-easing-standard);
+}
+
+.demo-card__copy:hover {
+  background: var(--ds-color-primary-50);
+  color: var(--ds-color-primary-700);
+  border-color: var(--ds-color-primary-400);
+}
+
+.demo-card__code {
+  margin: 0;
+  padding: var(--ds-space-md);
+  padding-top: calc(var(--ds-space-md) + 1.5rem); /* room for copy button */
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-xs-size);
+  line-height: var(--ds-line-height-base);
+  color: var(--ds-text-primary);
+  white-space: pre;
+  overflow-x: auto;
+  max-height: 32rem;
+  overflow-y: auto;
+}
+
+.demo-card__code code {
+  font-family: inherit;
+  font-size: inherit;
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}
