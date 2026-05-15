@@ -1354,6 +1354,32 @@ img, svg { display: block; }
   opacity: 0.6;
 }
 
+/* --------- Syntax token colors ---------
+   Driven by --ds-* variables so the highlighting retones with the theme.
+   Keywords pull from primary, tags from secondary, strings from success
+   (green is the most-conventional "string" color), numbers from info, etc.
+   `default` inherits the parent color — no rule needed. */
+.demo-card__code [data-token="keyword"] {
+  color: var(--ds-color-primary-600);
+  font-weight: var(--ds-weight-medium);
+}
+.demo-card__code [data-token="tag"] {
+  color: var(--ds-color-secondary-600);
+}
+.demo-card__code [data-token="attr"] {
+  color: var(--ds-color-warning);
+}
+.demo-card__code [data-token="string"] {
+  color: var(--ds-color-success);
+}
+.demo-card__code [data-token="number"] {
+  color: var(--ds-color-info);
+}
+.demo-card__code [data-token="comment"] {
+  color: var(--ds-text-muted);
+  font-style: italic;
+}
+
 /* --------- Badge grid demo --------- */
 
 /* True 2-D grid: variants as rows, tones as columns. Columns auto-size to fit

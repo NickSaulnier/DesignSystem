@@ -1,4 +1,5 @@
-import { useState, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
+import { tokenizeTsxLines } from "./highlightTsx.js";
 
 interface DemoCardProps {
   /** The rendered demo. */
@@ -38,7 +39,9 @@ export function DemoCard({
     }
   };
 
-  const lines = source.split("\n");
+  // Tokenize once per source change. The tokenizer is pure + fast enough that
+  // a useMemo is plenty — no need for an off-thread worker.
+  const lines = useMemo(() => tokenizeTsxLines(source), [source]);
 
   return (
     <div className="demo-card">
@@ -61,8 +64,14 @@ export function DemoCard({
           </button>
           <pre className="demo-card__code" aria-label="Source code">
             <code data-language="tsx">
-              {lines.map((line, i) => (
-                <span key={i} className="demo-card__line">{line === "" ? " " : line}</span>
+              {lines.map((tokens, i) => (
+                <span key={i} className="demo-card__line">
+                  {tokens.length === 0
+                    ? " "
+                    : tokens.map((tok, j) => (
+                        <span key={j} data-token={tok.kind}>{tok.text}</span>
+                      ))}
+                </span>
               ))}
             </code>
           </pre>
