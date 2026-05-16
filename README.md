@@ -330,13 +330,13 @@ The core platform is in place: token schema, an 18-component library, Claude-pow
 
 ### Quality
 
-- [ ] **Tests.** The codebase ships zero tests today. Highest leverage: unit tests for `composeTheme`, `ensureContrast`, `deriveDarkVariant`, and the export adapters — they're pure functions with deterministic outputs.
-- [ ] **CI on PRs.** Today the release workflow runs on push to `main`. Add a PR workflow that runs `pnpm typecheck && pnpm build` to catch regressions before merge.
+- [x] ~~**Tests.**~~ ✅ Shipped — 77 unit tests via vitest across `@design-system/tokens` and `@design-system/theme-engine`. Covers schema validation, CSS var emit, Tailwind + Figma export adapters, LCH scale generation, WCAG contrast math, `composeTheme`, `deriveDarkVariant`, and `applyTokenEdits`. Run with `pnpm test`.
+- [x] ~~**CI on PRs.**~~ ✅ Shipped — `.github/workflows/ci.yml` runs typecheck + build + test on every PR and push to `main`. Concurrency-gated so duplicate pushes cancel earlier runs.
 - [ ] **A11y audit beyond contrast.** Focus rings, motion preferences (`prefers-reduced-motion`), ARIA coverage spot-checks per component.
 - [ ] **Documentation site.** Astro or VitePress with live component demos against the current theme. Eats the Studio's gallery as its component reference and pairs it with usage docs.
 
 ### Settings panel — manual token editing
 
-- [ ] **Direct token editing in the Studio.** A settings panel (slide-over or right-rail) with inputs bound to every editable token: color pickers for primary/secondary/neutral seeds and semantic colors; sliders for spacing scale base and radius scale; selects for font-family pair, motion character, and border character. Each edit re-runs the existing local composition (`composeTheme` + `ensureContrast`) without calling Claude — so users can hand-tune anything Claude landed without burning API tokens. Persist edits as a layer on top of the last generated theme so the lineage is clear (original → user-edited), and let users export or save the customized result like any other theme. Pairs naturally with the color palette editor under *Studio depth* — same machinery, different surface.
+- [x] ~~**Direct token editing in the Studio.**~~ ✅ Shipped — `SettingsPanel` slide-over with color pickers for seeds + semantic colors, selects for neutral cast / border / visual mood / motion / font pair. Each edit re-runs `applyTokenEdits` locally (no API call) and pushes through the existing `displayTheme` pipeline so dark-mode users see edits applied dark automatically. Pairs with the still-open color palette editor under *Studio depth*.
 
 See [ROADMAP.md](ROADMAP.md) for the original task briefs and the four completed milestones.
